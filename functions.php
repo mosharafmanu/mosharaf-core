@@ -112,17 +112,19 @@ function mosharaf_scripts() {
 	wp_enqueue_style( 'mosharaf-core-utilities',      get_template_directory_uri() . '/assets/css/utilities.css',                     array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-video',          get_template_directory_uri() . '/assets/css/video-behaviors.css',               array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-video-popup',    get_template_directory_uri() . '/assets/css/video-popup.css',                   array(), MOSHARAF_CORE_VERSION );
+	wp_enqueue_style( 'slick-carousel',               get_template_directory_uri() . '/assets/css/slick.css',                         array(), MOSHARAF_CORE_VERSION );
+	wp_enqueue_style( 'mosharaf-core-slick-custom',   get_template_directory_uri() . '/assets/css/mosharaf-core-slick-custom.css',    array( 'slick-carousel' ), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-design-style',   get_template_directory_uri() . '/assets/css/mosharaf-core-design-style.css',    array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-form-style',    get_template_directory_uri() . '/assets/css/mosharaf-core-form.css',             array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-starter-style',  get_template_directory_uri() . '/assets/css/mosharaf-core-starter-style.css',   array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-style',          get_stylesheet_uri(),                                                           array(), MOSHARAF_CORE_VERSION );
-	wp_enqueue_style( 'mosharaf-core-custom',         get_template_directory_uri() . '/assets/css/custom.css',                       array(), MOSHARAF_CORE_VERSION );
 
 	// ── Core JS ──────────────────────────────────────────────────
 	wp_enqueue_script( 'jquery-vimeo-player',         get_template_directory_uri() . '/assets/js/jquery.mb.vimeo_player.min.js', array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
+	wp_enqueue_script( 'slick-carousel',              get_template_directory_uri() . '/assets/js/slick.js',                       array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
 	wp_enqueue_script( 'mosharaf-core-video-behaviors', get_template_directory_uri() . '/assets/js/video-behaviors.js',           array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
 	wp_enqueue_script( 'mosharaf-core-video-popup',     get_template_directory_uri() . '/assets/js/video-popup.js',               array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
-	wp_enqueue_script( 'mosharaf-core-scripts',         get_template_directory_uri() . '/assets/js/scripts.js',                   array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
+	wp_enqueue_script( 'mosharaf-core-scripts',         get_template_directory_uri() . '/assets/js/scripts.js',                   array( 'jquery', 'slick-carousel' ), MOSHARAF_CORE_VERSION, true );
 }
 add_action( 'wp_enqueue_scripts', 'mosharaf_scripts' );
 

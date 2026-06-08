@@ -232,7 +232,7 @@ do_action( 'woocommerce_before_shop_loop' );
 To make a "featured" product card span all 3 columns (e.g. the first product):
 
 ```css
-/* In custom.css or your project CSS */
+/* In your project CSS */
 .products.card-grid .product:first-child {
     grid-column: 1 / -1;
 }

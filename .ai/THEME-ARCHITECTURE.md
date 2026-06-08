@@ -41,8 +41,7 @@ mosharaf-core/
 │   │   ├── spacer.css                       # Spacing utilities (mt-*, mb-*, pt-*, pb-*)
 │   │   ├── utilities.css                    # Display/layout utilities
 │   │   ├── video-behaviors.css              # Video system CSS
-│   │   ├── video-popup.css                  # Video popup modal CSS
-│   │   └── custom.css                       # Per-project overrides — loaded last, always empty in starter
+│   │   └── video-popup.css                  # Video popup modal CSS
 │   ├── js/
 │   │   ├── video-behaviors.js             # Video system JS
 │   │   ├── video-popup.js                 # Video popup JS
