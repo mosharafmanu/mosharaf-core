@@ -186,13 +186,26 @@ fi
 #  GATHER FILES
 # =============================================================
 step "Collecting files"
-mapfile -t ALL_FILES < <(collect_files)
+
+# `mapfile` needs bash 4+; macOS ships bash 3.2 (no mapfile, no namerefs),
+# so read lines into arrays portably with plain while-read loops instead.
+ALL_FILES=()
+while IFS= read -r _file; do
+    ALL_FILES+=( "$_file" )
+done < <(collect_files)
 echo "  Found ${#ALL_FILES[@]} files to process"
 
 # Separate CSS files for CSS-specific replacements
-mapfile -t CSS_FILES < <(printf '%s\n' "${ALL_FILES[@]}" | grep '\.css$')
+CSS_FILES=()
+while IFS= read -r _file; do
+    CSS_FILES+=( "$_file" )
+done < <(printf '%s\n' "${ALL_FILES[@]}" | grep '\.css$')
+
 # PHP-only files for image-size slug replacement
-mapfile -t PHP_FILES < <(printf '%s\n' "${ALL_FILES[@]}" | grep '\.php$')
+PHP_FILES=()
+while IFS= read -r _file; do
+    PHP_FILES+=( "$_file" )
+done < <(printf '%s\n' "${ALL_FILES[@]}" | grep '\.php$')
 
 # =============================================================
 #  REPLACEMENTS
