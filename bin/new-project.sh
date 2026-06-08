@@ -130,6 +130,11 @@ if [[ "$THEME_SLUG" == "mosharaf-core" ]]; then
     die "Theme Slug cannot be 'mosharaf-core'. Copy the folder first, then run this script inside the copy."
 fi
 
+# Derived: PHP constant prefix — uppercase slug, hyphens → underscores
+# (e.g. nexora → NEXORA, travelnerds-theme → TRAVELNERDS_THEME).
+# This is how MOSHARAF_CORE_VERSION itself was built from mosharaf-core.
+CONST_PREFIX="$(echo "$THEME_SLUG" | tr '[:lower:]' '[:upper:]' | tr '-' '_')"
+
 # =============================================================
 #  PREVIEW + CONFIRM
 # =============================================================
@@ -138,6 +143,7 @@ echo -e "  ${BOLD}Replacements that will be applied:${RESET}"
 echo ""
 printf "  %-28s →  %s\n" "Mosharaf Core"     "$THEME_NAME"
 printf "  %-28s →  %s\n" "mosharaf-core"      "$THEME_SLUG"
+printf "  %-28s →  %s\n" "MOSHARAF_CORE_"     "${CONST_PREFIX}_"
 printf "  %-28s →  %s\n" "mosharaf_"          "${PHP_PREFIX}_"
 printf "  %-28s →  %s\n" "--mc-"              "--${CSS_PREFIX}-"
 printf "  %-28s →  %s\n" "bg-mc-  color-mc-"  "bg-${CSS_PREFIX}-  color-${CSS_PREFIX}-"
@@ -223,32 +229,37 @@ n=$(replace_in_files "mosharaf-core" "$THEME_SLUG" "${ALL_FILES[@]}")
 ok "Slug 'mosharaf-core' → '$THEME_SLUG'  ($n files)"
 CHANGED=$((CHANGED + n))
 
-# 3. PHP function prefix
+# 3. PHP constant prefix — e.g. MOSHARAF_CORE_VERSION → NEXORA_VERSION
+n=$(replace_in_files "MOSHARAF_CORE_" "${CONST_PREFIX}_" "${ALL_FILES[@]}")
+ok "PHP constant prefix 'MOSHARAF_CORE_' → '${CONST_PREFIX}_'  ($n files)"
+CHANGED=$((CHANGED + n))
+
+# 4. PHP function prefix
 n=$(replace_in_files "mosharaf_" "${PHP_PREFIX}_" "${ALL_FILES[@]}")
 ok "PHP prefix 'mosharaf_' → '${PHP_PREFIX}_'  ($n files)"
 CHANGED=$((CHANGED + n))
 
-# 4. CSS custom property prefix
+# 5. CSS custom property prefix
 n=$(replace_in_files "--mc-" "--${CSS_PREFIX}-" "${ALL_FILES[@]}")
 ok "CSS var prefix '--mc-' → '--${CSS_PREFIX}-'  ($n files)"
 CHANGED=$((CHANGED + n))
 
-# 5. CSS background utility classes
+# 6. CSS background utility classes
 n=$(replace_in_files "bg-mc-" "bg-${CSS_PREFIX}-" "${ALL_FILES[@]}")
 ok "CSS class 'bg-mc-' → 'bg-${CSS_PREFIX}-'  ($n files)"
 CHANGED=$((CHANGED + n))
 
-# 6. CSS text colour utility classes
+# 7. CSS text colour utility classes
 n=$(replace_in_files "color-mc-" "color-${CSS_PREFIX}-" "${ALL_FILES[@]}")
 ok "CSS class 'color-mc-' → 'color-${CSS_PREFIX}-'  ($n files)"
 CHANGED=$((CHANGED + n))
 
-# 7. PHP image-size slug references (single-quoted strings)
+# 8. PHP image-size slug references (single-quoted strings)
 n=$(replace_in_files "'mc-" "'${CSS_PREFIX}-" "${PHP_FILES[@]}")
 ok "PHP image sizes 'mc-N' → '${CSS_PREFIX}-N'  ($n files)"
 CHANGED=$((CHANGED + n))
 
-# 8. PHP image-size slug references (double-quoted strings)
+# 9. PHP image-size slug references (double-quoted strings)
 n=$(replace_in_files "\"mc-" "\"${CSS_PREFIX}-" "${PHP_FILES[@]}")
 [[ $n -gt 0 ]] && ok "PHP image sizes \"mc-N\" → \"${CSS_PREFIX}-N\"  ($n files)" \
     || skipped "Double-quoted mc- image sizes: none found"
