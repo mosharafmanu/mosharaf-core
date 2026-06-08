@@ -81,7 +81,7 @@ get_header();
 						<?php esc_html_e( 'Products', 'mosharaf-core' ); ?>
 						<span class="search-results-group__count"><?php echo esc_html( number_format_i18n( $product_count ) ); ?></span>
 					</h2>
-					<div class="products card-grid columns-3">
+					<div class="products card-grid columns-3 woocommerce">
 						<?php echo $products_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 				</section>
