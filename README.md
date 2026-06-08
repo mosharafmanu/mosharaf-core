@@ -22,6 +22,23 @@ It provides:
 
 ---
 
+## WooCommerce Support (Optional)
+
+Mosharaf Core ships with a self-contained, removable WooCommerce module —
+shop/product templates, cart/checkout/account styling, and an optional
+sidebar-filter shop archive layout (hero, category filters, toolbar).
+Inactive until WooCommerce is installed.
+
+- **Building an e-commerce site?** Keep it as-is — it's wired in and themed
+  end-to-end (shop, single product, cart, checkout, my account).
+- **Building a non-shop site?** Run `bin/new-project.sh` and answer "n" to
+  the WooCommerce prompt — it removes the module's five locations
+  automatically, no manual cleanup needed.
+
+See `.ai/WOOCOMMERCE.md` for the full module breakdown and manual-removal steps.
+
+---
+
 ## Quick Start — New Project
 
 1. Copy this theme folder and rename it to the project slug
@@ -58,6 +75,8 @@ mosharaf-core/
 ├── .ai/                         # AI documentation
 │   ├── ACF-PATTERNS.md          # How to build sections + all helper function signatures
 │   ├── VIDEO-SYSTEM.md          # Video field and helper documentation
+│   ├── WOOCOMMERCE.md           # Optional WooCommerce module — what's included, how to remove it
+│   ├── TYPOGRAPHY.md            # Type scale and heading conventions
 │   ├── NEW-PROJECT-CHECKLIST.md # Setup checklist for each project
 │   ├── NEW-PROJECT-SETUP.md     # Bootstrap script documentation
 │   └── THEME-ARCHITECTURE.md   # How the framework is structured
@@ -118,5 +137,7 @@ All documentation lives in `.ai/`. Read these before starting a new project:
 1. `.ai/NEW-PROJECT-CHECKLIST.md` — setup steps
 2. `.ai/ACF-PATTERNS.md` — how to build sections + helper function signatures
 3. `.ai/VIDEO-SYSTEM.md` — how to use the video renderer
-4. `.ai/NEW-PROJECT-SETUP.md` — bootstrap script reference
-5. `.ai/THEME-ARCHITECTURE.md` — how the framework is structured
+4. `.ai/WOOCOMMERCE.md` — optional WooCommerce module: what ships, how to remove it
+5. `.ai/TYPOGRAPHY.md` — type scale and heading conventions
+6. `.ai/NEW-PROJECT-SETUP.md` — bootstrap script reference
+7. `.ai/THEME-ARCHITECTURE.md` — how the framework is structured
