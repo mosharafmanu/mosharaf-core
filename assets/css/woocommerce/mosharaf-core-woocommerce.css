@@ -1,0 +1,1794 @@
+/* =============================================================================
+   MOSHARAF CORE — WOOCOMMERCE STYLES
+   All values use --mc-* tokens from style.css :root {}.
+   WooCommerce default styles are fully removed (woocommerce_enqueue_styles
+   returns empty array in functions.php) — this file replaces them entirely.
+
+   Sections:
+   1. Layout
+   2. Notices
+   3. Buttons
+   4. Breadcrumb
+   5. Archive — ordering bar
+   6. Product card (loop)
+   7. Sale badge
+   8. Star rating
+   9. Price
+  10. Single product
+  11. Product tabs
+  12. Cart
+  13. Checkout
+  14. My account
+  15. Responsive
+   ============================================================================= */
+
+
+/* =============================================================================
+   1. LAYOUT
+   ============================================================================= */
+
+/* Wrapper added by functions.php via woocommerce_before/after_main_content */
+.wc-main {
+	padding-top: 3.75rem;
+	padding-bottom: 5rem;
+}
+
+/* Cart/checkout/account pages render through the generic page template
+   (content-page.php), which wraps everything in `.post-inner` — a
+   reading-width constraint (max-width: 50rem) meant for prose/blog
+   content. WC's 2-column layouts need the full container width, so lift
+   it wherever WC adds its `woocommerce-page` body class (cart, checkout,
+   my-account, shop — anywhere `.post-inner` could otherwise squeeze them
+   into a single narrow column). */
+.woocommerce-page .post-inner {
+	max-width: none;
+}
+
+/* Archive page title */
+.wc-archive-title {
+	margin-bottom: 0.5rem;
+}
+
+/* WC wraps everything in .woocommerce on cart/checkout/account pages */
+.woocommerce,
+.woocommerce-page {
+	width: 100%;
+}
+
+
+/* =============================================================================
+   2. NOTICES
+   Moved to mosharaf-core-notices.css — a global, theme-wide WooCommerce
+   component (notices print on single-product, cart, checkout, my-account,
+   anywhere wc_print_notices() runs), kept separate from this
+   single-product-scoped stylesheet so it stays intact across projects
+   even when other templates here get redesigned per project.
+   ============================================================================= */
+
+
+/* =============================================================================
+   3. BUTTONS
+   WC uses .button on most CTAs. .alt is the primary/checkout variant.
+   Map both to our .site-btn .btn-primary token system.
+   ============================================================================= */
+
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit,
+.woocommerce a.button.alt,
+.woocommerce button.button.alt,
+.woocommerce input.button.alt,
+.woocommerce .checkout-button,
+.woocommerce #place_order {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: var(--mc-btn-padding-y) var(--mc-btn-padding-x);
+	font-size: 1rem;
+	font-weight: var(--mc-btn-font-weight);
+	font-family: var(--mc-font-body);
+	line-height: normal;
+	color: var(--mc-color-light);
+	background-color: var(--mc-color-primary);
+	border: 2px solid var(--mc-color-primary);
+	border-radius: var(--mc-border-radius);
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color var(--mc-transition), border-color var(--mc-transition);
+	-webkit-appearance: none;
+	appearance: none;
+	box-shadow: none;
+}
+
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover,
+.woocommerce #respond input#submit:hover,
+.woocommerce a.button.alt:hover,
+.woocommerce button.button.alt:hover,
+.woocommerce .checkout-button:hover,
+.woocommerce #place_order:hover {
+	background-color: var(--mc-color-secondary);
+	border-color: var(--mc-color-secondary);
+	color: var(--mc-color-light);
+}
+
+/* Disabled state */
+.woocommerce a.button.disabled,
+.woocommerce button.button:disabled,
+.woocommerce input.button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+
+/* =============================================================================
+   4. BREADCRUMB
+   ============================================================================= */
+
+.woocommerce-breadcrumb {
+	font-size: 0.875rem;
+	color: var(--mc-color-mid);
+	margin-bottom: 1.75rem;
+}
+
+.woocommerce-breadcrumb a {
+	color: var(--mc-color-mid);
+	text-decoration: none;
+	transition: color var(--mc-transition);
+}
+
+.woocommerce-breadcrumb a:hover {
+	color: var(--mc-color-primary);
+}
+
+
+/* =============================================================================
+   5. ARCHIVE — ORDERING BAR
+   ============================================================================= */
+
+.woocommerce-products-header {
+	margin-bottom: 1.5rem;
+}
+
+.woocommerce-products-header__title {
+	margin-bottom: 0.5rem;
+}
+
+/* Result count + ordering sit in a flex row above the grid */
+.woocommerce-ordering,
+.woocommerce-result-count {
+	display: inline-block;
+	font-size: 0.9375rem;
+	color: var(--mc-color-mid);
+	margin-bottom: 1.5rem;
+}
+
+.woocommerce-ordering {
+	float: right;
+}
+
+.woocommerce-ordering select {
+	padding: 0.5rem 2.5rem 0.5rem 0.875rem;
+	font-size: 0.875rem;
+	width: auto;
+}
+
+/* Clear float after ordering bar */
+.woocommerce-ordering + * {
+	clear: both;
+}
+
+
+/* =============================================================================
+   6. PRODUCT CARD (loop)
+   HTML structure controlled by woocommerce/content-product.php.
+   Use two-class selector (.wc-product-card.product) for higher specificity
+   to prevent WooCommerce JS or other rules from overriding flex-direction.
+   ============================================================================= */
+
+.wc-product-card.product,
+.wc-product-card {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--mc-color-light);
+	border: 0.0625rem solid color-mix(in srgb, var(--mc-color-dark) 9%, transparent);
+	border-radius: var(--mc-border-radius);
+	overflow: hidden;
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--mc-color-dark) 5%, transparent);
+	transition: transform var(--mc-transition), box-shadow var(--mc-transition), border-color var(--mc-transition);
+	position: relative;
+}
+
+/* Hover treatment matches .attr-card — lift, primary-tinted glow, border shift */
+.wc-product-card.product:hover,
+.wc-product-card:hover {
+	transform: translateY(-0.25rem);
+	border-color: color-mix(in srgb, var(--mc-color-primary) 30%, transparent);
+	box-shadow:
+		0 0.5rem 1.5rem color-mix(in srgb, var(--mc-color-primary) 10%, transparent),
+		0 1px 3px color-mix(in srgb, var(--mc-color-dark) 5%, transparent);
+}
+
+/* Product image link — padding-bottom trick gives reliable 1:1 aspect ratio */
+.wc-product-card__image {
+	display: block;
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	background-color: var(--mc-color-subtle);
+	height: 0;
+	padding-bottom: 100%;
+}
+
+/* All possible thumbnail output formats WC may produce */
+.wc-product-card__image img,
+.wc-product-card__image picture,
+.wc-product-card__image picture img,
+.wc-product-card__image figure,
+.wc-product-card__image figure img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	margin: 0;
+	transition: transform var(--mc-transition);
+}
+
+.wc-product-card:hover .wc-product-card__image img {
+	transform: scale(1.04);
+}
+
+/* Card body — title, rating, price.
+   justify-content: flex-end anchors the title/price block to the bottom,
+   right above the button — any extra height from row-stretching collects
+   as breathing room above the title instead of as a gap below the price. */
+.wc-product-card__body {
+	padding: 1.125rem 1.25rem 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	gap: 0.375rem;
+	flex: 1;
+	color: var(--mc-color-text);
+}
+
+/* High-specificity rule: .woocommerce is on <body> on all WC pages.
+   Adding it raises specificity to (0,3,0) to beat any other cascade winner. */
+.woocommerce .wc-product-card .woocommerce-loop-product__title,
+.wc-product-card__body .woocommerce-loop-product__title {
+	font-size: 1.0625rem;
+	font-weight: 600;
+	margin: 0;
+	line-height: 1.35;
+	/* Direct hex value — eliminates any risk from an undefined CSS variable */
+	color: #111827;
+}
+
+.woocommerce .wc-product-card .woocommerce-loop-product__title a,
+.wc-product-card__body .woocommerce-loop-product__title a {
+	color: #111827;
+	text-decoration: none;
+	transition: color var(--mc-transition);
+}
+
+.woocommerce .wc-product-card .woocommerce-loop-product__title a:hover,
+.wc-product-card__body .woocommerce-loop-product__title a:hover {
+	color: var(--mc-color-primary);
+}
+
+/* Card footer — add to cart button */
+.wc-product-card__footer {
+	padding: 0.5rem 1.25rem 1.25rem;
+}
+
+.wc-product-card__footer .button {
+	display: block;
+	width: 100%;
+	text-align: center;
+	justify-content: center;
+	font-size: 0.9375rem;
+	padding-top: 0.75rem;
+	padding-bottom: 0.75rem;
+}
+
+
+/* =============================================================================
+   7. SALE BADGE
+   ============================================================================= */
+
+.onsale {
+	position: absolute;
+	top: 0.75rem;
+	left: 0.75rem;
+	z-index: 1;
+	background-color: var(--mc-color-accent);
+	color: var(--mc-color-dark);
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	padding: 0.25rem 0.625rem;
+	border-radius: var(--mc-border-radius-sm);
+	line-height: 1.4;
+}
+
+
+/* =============================================================================
+   8. STAR RATING
+   ============================================================================= */
+
+.star-rating {
+	display: inline-flex;
+	align-items: center;
+	overflow: hidden;
+	position: relative;
+	height: 1em;
+	line-height: 1;
+	font-size: 0.875rem;
+	font-family: 'star', sans-serif;
+	width: 5.4em;
+	color: var(--mc-color-mid);
+}
+
+.star-rating::before,
+.star-rating span::before {
+	content: '\53\53\53\53\53';
+	color: var(--mc-color-mid);
+	float: left;
+	top: 0;
+	left: 0;
+	position: absolute;
+}
+
+.star-rating span {
+	overflow: hidden;
+	float: left;
+	top: 0;
+	left: 0;
+	position: absolute;
+	padding-top: 1.5em;
+}
+
+.star-rating span::before {
+	content: '\53\53\53\53\53';
+	color: var(--mc-color-accent);
+	top: 0;
+	position: absolute;
+}
+
+.woocommerce-product-rating {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+	font-size: 0.875rem;
+	color: var(--mc-color-mid);
+}
+
+.woocommerce-product-rating a {
+	color: var(--mc-color-mid);
+}
+
+
+/* =============================================================================
+   9. PRICE
+   ============================================================================= */
+
+.price,
+.woocommerce-Price-amount.amount,
+.woocommerce .wc-product-card .price {
+	font-size: 1rem;
+	font-weight: 700;
+	/* Direct hex to guarantee dark text regardless of CSS variable resolution */
+	color: #111827;
+}
+
+/* Original price crossed out during a sale */
+.price del,
+.price del .woocommerce-Price-amount {
+	color: var(--mc-color-mid);
+	font-weight: 400;
+	font-size: 0.875em;
+	text-decoration: line-through;
+}
+
+/* Sale price */
+.price ins,
+.price ins .woocommerce-Price-amount {
+	color: var(--mc-color-primary);
+	text-decoration: none;
+	font-weight: 700;
+}
+
+/* Single product price — larger.
+   Scoped to .entry-summary (not just div[id^="product-"]) because .related
+   and .upsells loop sections also live inside the product wrapper — a bare
+   descendant selector would leak this larger size onto their card prices too. */
+.woocommerce.single-product div[id^="product-"] .entry-summary p.price,
+.woocommerce.single-product div[id^="product-"] .entry-summary span.price {
+	font-size: 1.5rem;
+	margin-bottom: 1.25rem;
+}
+
+
+/* =============================================================================
+  10. SINGLE PRODUCT
+   ============================================================================= */
+
+/* Two-column layout: gallery left, summary right */
+.woocommerce.single-product div[id^="product-"] {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-areas:
+		'gallery summary'
+		'tabs    tabs';
+	gap: 3rem 4rem;
+	align-items: start;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery {
+	grid-area: gallery;
+}
+
+.woocommerce.single-product div[id^="product-"] .entry-summary {
+	grid-area: summary;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-tabs {
+	grid-area: tabs;
+}
+
+/* Related/upsell sections aren't named grid areas — without an explicit
+   placement the grid auto-places them into a single 1fr column. Span
+   the full row so they lay out like the shop archive grid. */
+.woocommerce.single-product div[id^="product-"] > .related.products,
+.woocommerce.single-product div[id^="product-"] > .upsells.products {
+	grid-column: 1 / -1;
+	margin-top: 1rem;
+}
+
+/* -----------------------------------------------------------------------
+   Product gallery — WooCommerce's stock styling, ported verbatim from
+   woocommerce.scss (the div.images / .woocommerce-product-gallery rules)
+   and the woocommerce-product-gallery__trigger mixin in _mixins.scss.
+   No theme-specific redesign — flexslider mechanics are JS-driven via
+   inline styles, so these are the only rules WC ships for the gallery.
+   ----------------------------------------------------------------------- */
+
+.woocommerce.single-product div[id^="product-"] div.images img {
+	display: block;
+	width: 100%;
+	height: auto;
+	box-shadow: none;
+}
+
+.woocommerce.single-product div[id^="product-"] div.images div.thumbnails {
+	padding-top: 1em;
+}
+
+.woocommerce.single-product div[id^="product-"] div.images.woocommerce-product-gallery {
+	position: relative;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery__wrapper {
+	transition: all cubic-bezier(0.795, -0.035, 0, 1) 0.5s;
+	margin: 0;
+	padding: 0;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery__wrapper .zoomImg {
+	background-color: #fff;
+	opacity: 0;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery__image--placeholder {
+	border: 1px solid #f2f2f2;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery__image:nth-child(n + 2) {
+	width: 25%;
+	display: inline-block;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery__image a {
+	display: block;
+	outline-offset: -2px;
+}
+
+/* Zoom trigger — WC's default CSS-drawn magnifying glass: a white circle
+   button with a ring (::before) and diagonal handle (::after). */
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery__trigger {
+	background: #fff;
+	border: none;
+	box-sizing: content-box;
+	border-radius: 100%;
+	cursor: pointer;
+	font-size: 2em;
+	height: 36px;
+	padding: 0;
+	position: absolute;
+	right: 0.5em;
+	text-indent: -9999px;
+	top: 0.5em;
+	width: 36px;
+	z-index: 99;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery__trigger::before {
+	border: 2px solid #000;
+	border-radius: 100%;
+	box-sizing: content-box;
+	content: "";
+	display: block;
+	height: 10px;
+	left: 9px;
+	top: 9px;
+	position: absolute;
+	width: 10px;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery__trigger::after {
+	background: #000;
+	border-radius: 6px;
+	box-sizing: content-box;
+	content: "";
+	display: block;
+	height: 8px;
+	left: 22px;
+	position: absolute;
+	top: 19px;
+	transform: rotate(-45deg);
+	width: 2px;
+}
+
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs {
+	overflow: hidden;
+	zoom: 1;
+	margin: 0;
+	padding: 0;
+}
+
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs li {
+	width: 25%;
+	float: left;
+	margin: 0;
+	list-style: none;
+}
+
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs li img {
+	cursor: pointer;
+	opacity: 0.5;
+	margin: 0;
+}
+
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs li img.flex-active,
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs li img:hover {
+	opacity: 1;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery--columns-3 .flex-control-thumbs li:nth-child(3n + 1) {
+	clear: left;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery--columns-4 .flex-control-thumbs li:nth-child(4n + 1) {
+	clear: left;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery--columns-5 .flex-control-thumbs li:nth-child(5n + 1) {
+	clear: left;
+}
+
+/* -----------------------------------------------------------------------
+   Gallery — theme integration polish. WC's stock gallery markup, layout
+   mechanics, and behavior (above) stay untouched; these rules only layer
+   on the theme's elevation language (border-radius, border, shadow —
+   matches .wc-product-card) and tidy thumbnail spacing so the gallery
+   reads as part of this theme rather than a generic plugin default.
+   ----------------------------------------------------------------------- */
+
+/* Frame the visible viewport like a card. Targets .flex-viewport (the
+   fixed-size visible window) and — for single-image products, where
+   flexslider never initialises — the wrapper directly as a fallback.
+   Framing must NOT live on the wrapper once flexslider runs: it becomes
+   an oversized sliding strip (width: 800%+) and rounding/clipping it
+   would only affect its real (mostly off-screen) edges, not the visible
+   viewport border. */
+.woocommerce.single-product div[id^="product-"] .flex-viewport,
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-gallery > .woocommerce-product-gallery__wrapper {
+	border-radius: var(--mc-border-radius);
+	overflow: hidden;
+	border: 0.0625rem solid color-mix(in srgb, var(--mc-color-dark) 9%, transparent);
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--mc-color-dark) 5%, transparent);
+	background-color: var(--mc-color-light);
+}
+
+/* Once flexslider wraps the slides, the inner strip stays borderless —
+   .flex-viewport above already owns the visible frame. */
+.woocommerce.single-product div[id^="product-"] .flex-viewport .woocommerce-product-gallery__wrapper {
+	border-radius: 0;
+	border: 0;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+/* Thumbnail strip — WC renders these as edge-to-edge 25%-width tiles
+   dimmed to opacity: 0.5, which reads as oversized and washed out.
+   Flexbox + a fixed small width gives compact, evenly-gapped tiles that
+   wrap naturally (this also makes the --columns-N `clear: left` rules
+   above inert, since `clear` has no effect on flex items — by design,
+   not an oversight). Raising the resting opacity to 0.8 keeps inactive
+   thumbnails clearly visible while the active one still stands out.
+   Rounded corners + a primary-tinted active/hover border match
+   .wc-product-card's hover treatment. */
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.625rem;
+	margin: 1rem 0 0;
+}
+
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs li {
+	width: 4.5rem;
+	flex: 0 0 auto;
+	float: none;
+}
+
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs li img {
+	border-radius: var(--mc-border-radius-sm);
+	border: 0.0625rem solid transparent;
+	opacity: 0.8;
+	transition: opacity var(--mc-transition), border-color var(--mc-transition);
+}
+
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs li img.flex-active,
+.woocommerce.single-product div[id^="product-"] .flex-control-thumbs li img:hover {
+	opacity: 1;
+	border-color: color-mix(in srgb, var(--mc-color-primary) 30%, transparent);
+}
+
+/* Product title */
+.woocommerce.single-product div[id^="product-"] .product_title {
+	font-size: 2rem;
+	line-height: 1.2;
+	margin-bottom: 0.75rem;
+}
+
+/* Short description */
+.woocommerce.single-product div[id^="product-"] .woocommerce-product-details__short-description {
+	font-size: 1rem;
+	color: var(--mc-color-mid);
+	margin-bottom: 1.5rem;
+	line-height: 1.65;
+}
+
+/* Variable product — variations attribute table (Color, Size, etc.) */
+.woocommerce.single-product div[id^="product-"] form.cart .variations {
+	width: 100%;
+	border-collapse: collapse;
+	/* Extra room reserved below for the absolutely positioned "Clear" link
+	   (see .reset_variations) — it no longer occupies normal flow. */
+	margin-bottom: 2.5rem;
+}
+
+.woocommerce.single-product div[id^="product-"] form.cart .variations td,
+.woocommerce.single-product div[id^="product-"] form.cart .variations th {
+	padding: 0.4rem 0;
+	vertical-align: middle;
+	border: none;
+}
+
+.woocommerce.single-product div[id^="product-"] form.cart .variations .label {
+	padding-right: 1rem;
+	font-weight: 600;
+	font-size: 0.9375rem;
+	color: var(--mc-color-text);
+	white-space: nowrap;
+	width: 1%;
+}
+
+/* The site-wide `label { margin-bottom }` (for stacked form fields) throws
+   off `vertical-align: middle` here — the table cell centers the label's
+   margin box, not its text, so the trailing margin visually nudges "Color"/
+   "Size" upward relative to the dropdown beside them. Zero it out; label
+   and value sit side by side in a row, not stacked. */
+.woocommerce.single-product div[id^="product-"] form.cart .variations .label label {
+	margin: 0;
+}
+
+.woocommerce.single-product div[id^="product-"] form.cart .variations .value {
+	width: 100%;
+	position: relative;
+}
+
+.woocommerce.single-product div[id^="product-"] form.cart .variations .value select {
+	max-width: 100%;
+}
+
+/* WC stacks "Clear" below the dropdown inside the same .value cell —
+   that extra height is what `vertical-align: middle` centers, so the
+   dropdown itself ends up sitting above the row's (and the label's)
+   true center. Taking it out of flow lets .value's content height match
+   the dropdown alone, which is what makes the label/dropdown align.
+   .variations gets matching extra bottom margin to reserve its space. */
+.woocommerce.single-product div[id^="product-"] form.cart .reset_variations {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	margin-top: 0.5rem;
+	display: inline-block;
+	font-size: 0.8125rem;
+	color: var(--mc-color-accent);
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+/* Variation price / availability message */
+.woocommerce.single-product div[id^="product-"] .woocommerce-variation .woocommerce-variation-price {
+	margin-bottom: 1rem;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-variation .woocommerce-variation-availability {
+	font-size: 0.9375rem;
+	margin-bottom: 0.75rem;
+}
+
+/* Quantity + add to cart row (simple products) */
+.woocommerce.single-product div[id^="product-"] form.cart {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+	margin-bottom: 1.5rem;
+}
+
+/* Variable product: stack the variations table above the qty+button row */
+.woocommerce.single-product div[id^="product-"] form.cart.variations_form {
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.woocommerce.single-product div[id^="product-"] form.cart.variations_form .single_variation_wrap {
+	width: 100%;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-variation-add-to-cart {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+/* Quantity stepper styling lives in mosharaf-core-quantity.css — it's a
+   global, theme-wide WooCommerce component (cart/checkout/mini-cart/
+   shop-loop also render `.quantity`), kept separate from this
+   single-product-scoped stylesheet so it stays intact across projects
+   even when gallery/tabs/etc. here get redesigned per project. */
+
+/* Single add to cart button */
+.woocommerce.single-product div[id^="product-"] form.cart .single_add_to_cart_button {
+	flex: 1;
+	min-width: 12rem;
+}
+
+/* Product meta (SKU, categories, tags) */
+.woocommerce.single-product div[id^="product-"] .product_meta {
+	font-size: 0.875rem;
+	color: var(--mc-color-mid);
+	margin-top: 1.25rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+}
+
+.woocommerce.single-product div[id^="product-"] .product_meta a {
+	color: var(--mc-color-primary);
+	text-decoration: none;
+}
+
+.woocommerce.single-product div[id^="product-"] .product_meta a:hover {
+	text-decoration: underline;
+}
+
+
+/* =============================================================================
+  11. PRODUCT TABS (description, reviews, attributes)
+   ============================================================================= */
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-tabs {
+	border-top: 0.0625rem solid var(--mc-color-subtle);
+	padding-top: 2.5rem;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-tabs ul.tabs {
+	display: flex;
+	gap: 0;
+	list-style: none;
+	padding: 0;
+	margin: 0 0 2rem;
+	border-bottom: 0.0625rem solid var(--mc-color-subtle);
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-tabs ul.tabs li {
+	margin: 0;
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-tabs ul.tabs li a {
+	display: block;
+	padding: 0.75rem 1.25rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	color: var(--mc-color-mid);
+	text-decoration: none;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -0.0625rem;
+	transition: color var(--mc-transition), border-color var(--mc-transition);
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-tabs ul.tabs li.active a {
+	color: var(--mc-color-primary);
+	border-bottom-color: var(--mc-color-primary);
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-tabs ul.tabs li a:hover {
+	color: var(--mc-color-primary);
+}
+
+.woocommerce.single-product div[id^="product-"] .woocommerce-tabs .panel {
+	font-size: 1rem;
+	line-height: 1.65;
+	color: var(--mc-color-text);
+}
+
+
+/* =============================================================================
+  12. CART
+   ============================================================================= */
+
+/* Grid only when a cart form is present — the empty-cart state has just
+   a message + "return to shop" link, which should stack as plain blocks
+   rather than getting forced into a two-column layout. */
+.woocommerce-cart .woocommerce:has(.woocommerce-cart-form) {
+	display: grid;
+	grid-template-columns: 1fr 22rem;
+	gap: 3rem;
+	align-items: start;
+}
+
+/* WC prints the notices wrapper as a sibling before the cart form and
+   .cart-collaterals (3 children total feeding a 2-column grid) — without
+   an explicit span it gets auto-placed into column 1 of row 1, which then
+   pushes the form into column 2 and collaterals down into row 2 column 1,
+   scattering the layout. Spanning both columns keeps it (and any notice
+   it prints, e.g. "Cart updated") above the table/totals row. */
+.woocommerce-cart .woocommerce-notices-wrapper {
+	grid-column: 1 / -1;
+}
+
+/* "Update Cart" button visibility for the instant-update flow now lives in
+   mosharaf-core-cart-instant-update.css (`.mc-cart-instant-update`) — kept
+   standalone alongside its JS counterpart so the whole feature stays
+   independent of this file's per-project WC theming. */
+
+.woocommerce-cart .wc-empty-cart-message {
+	font-size: 1.0625rem;
+	color: var(--mc-color-text);
+	margin-bottom: 1.25rem;
+}
+
+/* Cart table — `margin: 0` resets the `.entry-content table { margin: 1.75rem 0 }`
+   prose-table rule (this page renders through content-page.php, so the
+   table sits inside `.entry-content`). That rule doesn't compete with this
+   one on specificity for `width`/`border-collapse`/`font-size`, but margin
+   is only ever set there, so it leaks through — pushing the table 28px
+   below the grid row's start and breaking its top alignment with the
+   cart-totals box beside it. */
+.woocommerce table.shop_table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9375rem;
+	margin: 0;
+}
+
+.woocommerce table.shop_table th {
+	text-align: left;
+	padding: 0.75rem 1rem;
+	font-weight: 700;
+	border-bottom: 0.125rem solid var(--mc-color-subtle);
+	color: var(--mc-color-text);
+}
+
+.woocommerce table.shop_table td {
+	padding: 1.25rem 1rem;
+	border-bottom: 0.0625rem solid var(--mc-color-subtle);
+	vertical-align: middle;
+}
+
+/* The cart and cart-totals/coupon tables both carry .shop_table, so the
+   generic .entry-content row-hover tint (mosharaf-core-design-style.css)
+   bleeds into them — and on touch devices :hover sticks after a tap,
+   leaving a row looking permanently "selected". Switch it off here. */
+.woocommerce-cart .entry-content table.shop_table tbody tr:hover td {
+	background-color: transparent;
+}
+
+/* Product image in cart row */
+.woocommerce table.cart .product-thumbnail img {
+	width: 5rem;
+	height: 5rem;
+	object-fit: cover;
+	border-radius: var(--mc-border-radius-sm);
+}
+
+/* Remove item link */
+.woocommerce table.cart .product-remove a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	font-size: 1.25rem;
+	line-height: 1;
+	color: var(--mc-color-mid);
+	text-decoration: none;
+	transition: color var(--mc-transition);
+}
+
+.woocommerce table.cart .product-remove a:hover {
+	color: #ef4444;
+}
+
+/* Cart totals box — bordered + lightly elevated like .wc-product-card so it
+   reads as its own card against the white page rather than blending into it. */
+.cart_totals {
+	background-color: var(--mc-color-subtle);
+	border: 0.0625rem solid rgba(0, 0, 0, 0.06);
+	border-radius: var(--mc-border-radius);
+	padding: 1.75rem;
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--mc-color-dark) 5%, transparent);
+}
+
+.cart_totals h2 {
+	font-size: 1.25rem;
+	margin-bottom: 1.25rem;
+	padding-bottom: 1.25rem;
+	border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.08);
+}
+
+.cart_totals table {
+	width: 100%;
+	font-size: 0.9375rem;
+	margin-bottom: 1.5rem;
+}
+
+/* `.shop_table` in the selector matches `.woocommerce table.shop_table th/td`
+   (line ~906) on specificity — needed to actually override its `1rem`
+   horizontal cell padding, which otherwise indents the label/value pair away
+   from the box's edges and reads as a stray, uneven gap. */
+.cart_totals table.shop_table th,
+.cart_totals table.shop_table td {
+	padding: 0.75rem 0;
+	border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.06);
+}
+
+/* Right-align amounts against their left-aligned labels — reads as a receipt
+   (figures stacked in a scannable column) rather than two loose word-pairs. */
+.cart_totals table td {
+	text-align: right;
+	font-weight: 600;
+}
+
+/* Order total: a crisp hairline above sets it apart as "the final figure",
+   and the brand-primary amount gives it the visual weight a checkout's
+   bottom-line number needs to stand out from the subtotal/shipping rows.
+   An inset box-shadow draws this line instead of `border-top` — borders
+   on collapsed table cells fight the row-above cell's border for the
+   shared edge (width/style ties fall back to whichever cell comes first,
+   which here is a near-invisible subtle-toned line), where a shadow simply
+   paints over the top at the exact thin weight specified, every time. */
+.cart_totals table .order-total th,
+.cart_totals table .order-total td {
+	border-bottom: none;
+	box-shadow: inset 0 0.0625rem 0 0 var(--mc-color-mid);
+	font-weight: 700;
+	padding-top: 1.25rem;
+}
+
+.cart_totals table .order-total th {
+	font-size: 1.0625rem;
+}
+
+/* WC's price markup wraps the figure in its own `.woocommerce-Price-amount`
+   span carrying a hardcoded color/size/weight (line ~384) — an element's own
+   declared style always beats an inherited one, so size/color set on the
+   <td> itself never reaches the visible text. Override the span directly. */
+.cart_totals table .order-total .woocommerce-Price-amount.amount {
+	font-size: 1.375rem;
+	font-weight: 700;
+	color: var(--mc-color-primary);
+}
+
+.cart_totals .checkout-button {
+	width: 100%;
+	justify-content: center;
+	margin-top: 1rem;
+}
+
+/* Coupon row */
+.coupon {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+}
+
+.coupon input[type="text"] {
+	flex: 1;
+	min-width: 10rem;
+}
+
+/* Coupon error ("…cannot be applied because it does not exist") — WC's
+   cart.js appends this as a plain `<p class="coupon-error-notice">` sibling
+   inside `.coupon` (a flex row with the input + button), where it previously
+   rendered as bare unstyled text squeezed against the button. `flex-basis:
+   100%` drops it onto its own full-width line below the row instead; the
+   color matches the error palette already established for notices/remove
+   links elsewhere in this stylesheet (#ef4444). */
+.coupon-error-notice {
+	flex-basis: 100%;
+	margin: 0.625rem 0 0;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #ef4444;
+}
+
+/* WC also marks the field itself invalid (`.has-error` + aria-invalid) when
+   it appends the message above — giving the input a matching red border
+   makes that connection visible instead of leaving it looking unaffected. */
+.coupon input[type="text"].has-error,
+.coupon input[type="text"].has-error:focus {
+	border-color: #ef4444;
+}
+
+
+/* =============================================================================
+  13. CHECKOUT
+   ============================================================================= */
+
+.woocommerce-checkout .woocommerce > form {
+	display: grid;
+	grid-template-columns: 1fr 22rem;
+	gap: 3rem;
+	align-items: start;
+}
+
+.woocommerce-checkout #customer_details {
+	grid-column: 1;
+}
+
+/* `.checkout-sidebar` (functions.php) wraps the heading + order-review box
+   as one grid item — keeps them stacked together regardless of how tall the
+   billing-details column ends up (see the wrapper hook's comment for why a
+   single combined item is needed instead of placing each separately).
+   `position: sticky` follows it down the page as the shopper fills in the
+   (usually much taller) billing form — without it, the sidebar sits pinned
+   to the top of its grid area and the page scrolls a large stretch of empty
+   space past it before reaching the billing column's end, making the order
+   summary look stranded rather than a constant point of reference. The grid
+   area itself (sized to the row's tallest item via `align-items: start`'s
+   *area*, not the item) is exactly as tall as `#customer_details`, so the
+   sticky element naturally stops at that column's bottom edge — it can never
+   drift past where the billing form ends. */
+.woocommerce-checkout .checkout-sidebar {
+	grid-column: 2;
+	position: sticky;
+	top: 2rem;
+}
+
+.woocommerce-checkout h3 {
+	font-size: 1.25rem;
+	margin-bottom: 1.25rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 0.0625rem solid var(--mc-color-subtle);
+}
+
+/* Checkout billing/shipping fields use WC's form-row */
+.woocommerce-billing-fields .form-row,
+.woocommerce-shipping-fields .form-row,
+.woocommerce-account-fields .form-row {
+	margin-bottom: 1.25rem;
+}
+
+/* Two columns for first/last name */
+.woocommerce-billing-fields__field-wrapper,
+.woocommerce-shipping-fields__field-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.25rem;
+}
+
+.woocommerce-billing-fields__field-wrapper .form-row-first,
+.woocommerce-billing-fields__field-wrapper .form-row-last,
+.woocommerce-shipping-fields__field-wrapper .form-row-first,
+.woocommerce-shipping-fields__field-wrapper .form-row-last {
+	flex: 1;
+	min-width: 10rem;
+}
+
+/* Country/state fields — WC swaps the plain `<select>` (already styled by
+   mosharaf-core-form.css) for a Select2 widget that hides the native element
+   and renders its own unthemed UI: a 28px-tall grey-bordered box with the
+   library's stock CSS-triangle arrow, completely out of step with our
+   50px-tall, subtle-bordered text inputs sitting right above/below it.
+   Rebuild it as a flex box matching that same input recipe — `display: flex`
+   on the selection box (it's already `position: relative` from Select2's own
+   CSS) lets `__rendered`/`__arrow` drop their absolute positioning and just
+   participate in normal flex flow, which is far more robust than chasing
+   the library's hardcoded pixel offsets. The arrow reuses the theme's own
+   select-arrow.svg so it reads as the same control as every other dropdown. */
+.select2-container--default .select2-selection--single {
+	display: flex;
+	align-items: center;
+	height: 3.125rem;
+	padding: 0 1rem;
+	background-color: var(--mc-color-background);
+	border: 0.0625rem solid var(--mc-color-subtle);
+	border-radius: var(--mc-border-radius-sm);
+	transition: border-color var(--mc-transition);
+}
+
+.select2-container--default.select2-container--open .select2-selection--single,
+.select2-container--default.select2-container--focus .select2-selection--single {
+	border-color: var(--mc-color-primary);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+	position: static;
+	flex: 1;
+	padding: 0;
+	color: var(--mc-color-text);
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+	color: var(--mc-color-mid);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+	position: static;
+	width: auto;
+	height: auto;
+	margin-left: 0.75rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+	position: static;
+	display: block;
+	width: 0.75rem;
+	height: 0.5625rem;
+	margin: 0;
+	border: none;
+	background-image: url(../svgs/select-arrow.svg);
+	background-repeat: no-repeat;
+	background-size: contain;
+}
+
+/* Dropdown panel — same card chrome (border/radius/shadow) as the rest of
+   the design system instead of Select2's flat, hard-edged default popup. */
+.select2-dropdown {
+	border-color: var(--mc-color-subtle);
+	border-radius: var(--mc-border-radius-sm);
+	box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, var(--mc-color-dark) 12%, transparent);
+	overflow: hidden;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+	border: 0.0625rem solid var(--mc-color-subtle);
+	border-radius: var(--mc-border-radius-sm);
+	padding: 0.5rem 0.75rem;
+	color: var(--mc-color-text);
+	font-size: 0.9375rem;
+	font-family: var(--mc-font-body);
+	outline: none;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+	border-color: var(--mc-color-primary);
+}
+
+.select2-container--default .select2-results__option {
+	padding: 0.625rem 1rem;
+	font-size: 0.9375rem;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background-color: var(--mc-color-primary);
+	color: var(--mc-color-light);
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"]:not(.select2-results__option--highlighted) {
+	background-color: color-mix(in srgb, var(--mc-color-primary) 10%, transparent);
+	color: var(--mc-color-primary);
+}
+
+/* Order review box — bordered + lightly elevated like `.cart_totals`, so the
+   whole sidebar (table, payment notice, terms text, button) reads as one
+   deliberate card instead of a flat tinted rectangle. */
+#order_review {
+	background-color: var(--mc-color-subtle);
+	border: 0.0625rem solid rgba(0, 0, 0, 0.06);
+	border-radius: var(--mc-border-radius);
+	padding: 1.5rem;
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--mc-color-dark) 5%, transparent);
+}
+
+#order_review h3 {
+	border-bottom: none;
+	margin-bottom: 1rem;
+}
+
+#order_review table.shop_table {
+	margin-bottom: 1rem;
+	font-size: 0.9375rem;
+}
+
+/* Receipt-style cells — edge-to-edge like the redesigned `.cart_totals`
+   (the ID's specificity already beats `.woocommerce table.shop_table th/td`'s
+   `1rem` horizontal padding outright, no extra `.shop_table` needed here). */
+#order_review table.shop_table th,
+#order_review table.shop_table td {
+	padding: 0.75rem 0;
+	border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.06);
+}
+
+/* The amount column is always the row's last cell — `.product-total` in the
+   body, the totals labels' value `<td>` in the foot, even the "Subtotal"
+   `<th>` in the head — so targeting `:last-child` right-aligns every figure
+   against the row above it without also pulling the left-aligned product-name
+   column over. Reads as a scannable, right-ruled column of numbers. */
+#order_review table.shop_table tr > *:last-child {
+	text-align: right;
+	font-weight: 600;
+}
+
+/* Order total: same thin-hairline + brand-amount treatment as `.cart_totals`
+   — an inset shadow instead of `border-top` so the divider paints at a true
+   1px regardless of how it resolves against the row-above cell's border in
+   the collapsed table model (see `.cart_totals .order-total` for the full
+   rationale). */
+#order_review table.shop_table .order-total th,
+#order_review table.shop_table .order-total td {
+	border-bottom: none;
+	box-shadow: inset 0 0.0625rem 0 0 var(--mc-color-mid);
+	font-weight: 700;
+	padding-top: 1.25rem;
+}
+
+#order_review table.shop_table .order-total th {
+	font-size: 1.0625rem;
+}
+
+/* WC wraps the figure in its own `.woocommerce-Price-amount` span carrying a
+   hardcoded color/size/weight that beats anything set on the ancestor `<td>`
+   — override the span directly (see `.cart_totals .order-total` amount rule). */
+#order_review table.shop_table .order-total .woocommerce-Price-amount.amount {
+	font-size: 1.375rem;
+	font-weight: 700;
+	color: var(--mc-color-primary);
+}
+
+/* Payment methods */
+.woocommerce #payment {
+	background-color: var(--mc-color-light);
+	border: 0.0625rem solid var(--mc-color-subtle);
+	border-radius: var(--mc-border-radius-sm);
+	margin-top: 1.25rem;
+	overflow: hidden;
+}
+
+.woocommerce #payment ul.payment_methods {
+	list-style: none;
+	padding: 1rem 1.25rem;
+	margin: 0;
+	border-bottom: 0.0625rem solid var(--mc-color-subtle);
+}
+
+.woocommerce #payment ul.payment_methods li {
+	padding: 0.5rem 0;
+}
+
+.woocommerce #payment ul.payment_methods label {
+	font-weight: 600;
+	margin-bottom: 0;
+	cursor: pointer;
+}
+
+.woocommerce #payment div.payment_box {
+	background-color: var(--mc-color-subtle);
+	padding: 0.75rem 1.25rem;
+	font-size: 0.875rem;
+	color: var(--mc-color-mid);
+}
+
+.woocommerce #payment .place-order {
+	padding: 1.25rem;
+}
+
+.woocommerce #place_order {
+	width: 100%;
+	justify-content: center;
+}
+
+
+/* =============================================================================
+  14. MY ACCOUNT
+   ============================================================================= */
+
+/* Scoped to `:has(.woocommerce-MyAccount-navigation)` — that sidebar nav only
+   renders for logged-in visitors viewing orders/addresses/etc. Logged-out
+   visitors land on the *same* `.woocommerce-account` body class for the
+   login/register screen, where `.woocommerce` holds nothing but an empty
+   notices wrapper, a heading, and a form. Without this guard, those three
+   plain-flow siblings get auto-placed into a 14rem/1fr grid meant for a
+   completely different layout — scattering them into separate cells across
+   the page (the heading lands in the wide column, the form gets shunted to
+   a narrow one beneath it). See `.account-auth` below for that page's own,
+   deliberate layout. */
+.woocommerce-account .woocommerce:has(.woocommerce-MyAccount-navigation) {
+	display: grid;
+	grid-template-columns: 14rem 1fr;
+	gap: 3rem;
+	align-items: start;
+}
+
+/* Account navigation — was a flat, borderless tint block where every link
+   (active or not) rendered the same brand-purple: the theme's global
+   `.entry-content a:not(.site-btn)` rule (two classes) out-specifies the
+   plain `li a` selector below (one class) and forces that color regardless
+   of what's declared here, so the active highlight had nothing to contrast
+   against. Re-anchoring through `.woocommerce-account` (matching specificity
+   plus one) restores control: inactive items recede to a muted tone, the
+   active item's own raised "tile" — bg, weight, shadow — now actually pops
+   the way the design intended, and the card gains the same border+shadow
+   chrome as `.account-auth`/`.cart_totals`/`#order_review` instead of
+   sitting flush against the page like an unfinished block. */
+.woocommerce-account .woocommerce-MyAccount-navigation {
+	background-color: var(--mc-color-subtle);
+	border: 0.0625rem solid rgba(0, 0, 0, 0.06);
+	border-radius: var(--mc-border-radius);
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--mc-color-dark) 5%, transparent);
+	overflow: hidden;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+	padding: 0.625rem;
+	margin: 0;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li a {
+	display: block;
+	padding: 0.625rem 1rem;
+	border-radius: calc(var(--mc-border-radius) - 0.25rem);
+	font-size: 0.9375rem;
+	font-weight: 500;
+	color: var(--mc-color-mid);
+	text-decoration: none;
+	transition: color var(--mc-transition), background-color var(--mc-transition), box-shadow var(--mc-transition);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li a:hover {
+	color: var(--mc-color-primary);
+	background-color: var(--mc-color-light);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a {
+	color: var(--mc-color-primary);
+	background-color: var(--mc-color-light);
+	font-weight: 600;
+	box-shadow: 0 1px 2px color-mix(in srgb, var(--mc-color-dark) 8%, transparent);
+}
+
+/* "Log out" ends the session rather than opening another account page — a
+   divider plus a hover tone borrowed from the site's error palette
+   (mosharaf-core-notices.css's `#ef4444`) marks it as a different kind of
+   action, the same way destructive/exit actions read elsewhere on the site. */
+.woocommerce-account .woocommerce-MyAccount-navigation li:last-child {
+	margin-top: 0.5rem;
+	padding-top: 0.625rem;
+	border-top: 0.0625rem solid rgba(0, 0, 0, 0.06);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li:last-child a:hover {
+	color: #ef4444;
+	background-color: color-mix(in srgb, #ef4444 6%, transparent);
+}
+
+/* Account content */
+.woocommerce-MyAccount-content {
+	min-width: 0;
+}
+
+.woocommerce-MyAccount-content h2,
+.woocommerce-MyAccount-content h3 {
+	margin-bottom: 1.25rem;
+}
+
+/* Addresses — WC outputs a `.u-columns.col2-set` two-column grid with no
+   accompanying layout rules (its own stylesheet is dequeued and the theme
+   never added an equivalent), so each `.u-column` falls back to plain block
+   flow — stacking full width — while its bare `<h2>` inherits the theme's
+   page-title-scale heading styles, rendering "Billing address" at the same
+   towering size as a hero headline crammed directly above a two-line
+   placeholder. Give the grid its intended side-by-side layout, scale the
+   heading down to a card sub-heading, and wrap each address in the same
+   card chrome as `.cart_totals`/`.account-auth`/`#order_review` so it reads
+   as a designed component rather than raw template output. Always exactly
+   two children when rendered (WC only wraps in `.u-columns` when shipping
+   is enabled), so `auto-fit` cleanly gives two even columns on wide
+   viewports and stacks on narrow ones with no media query needed. */
+.woocommerce-Addresses {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+	gap: 1.5rem;
+}
+
+.woocommerce-Address {
+	background-color: var(--mc-color-subtle);
+	border: 0.0625rem solid rgba(0, 0, 0, 0.06);
+	border-radius: var(--mc-border-radius);
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--mc-color-dark) 5%, transparent);
+	padding: 1.5rem;
+}
+
+/* `flex-wrap` rather than a fixed `align-items: center` — on narrow cards
+   "Shipping address" wraps to two lines, and centering would straddle the
+   edit link's single line across both; wrapping instead drops the link
+   cleanly onto its own line below (still left-aligned, via `space-between`
+   on a one-item row), which reads better at any heading length. */
+.woocommerce-Address-title {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.25rem 1rem;
+	margin-bottom: 1rem;
+}
+
+.woocommerce-Address-title h2 {
+	font-size: 1.0625rem;
+	font-weight: 600;
+	margin: 0;
+}
+
+.woocommerce-Address-title .edit {
+	flex-shrink: 0;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var(--mc-color-primary);
+	text-decoration: underline;
+	transition: color var(--mc-transition);
+}
+
+.woocommerce-Address-title .edit:hover {
+	color: var(--mc-color-secondary);
+}
+
+/* `<address>` carries a browser-default italic that reads oddly applied to
+   both the "not set up yet" placeholder AND a real formatted address —
+   normalize it so an actual address looks like the polished body text it is. */
+.woocommerce-Address address {
+	font-style: normal;
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	color: var(--mc-color-mid);
+}
+
+/* Login / register — `.account-auth` (functions.php) wraps WC's bare
+   <h2>+<form> (or, with registration enabled, its two-column `.u-columns`
+   block) in one element, turning it into a single centered card instead of
+   a small form adrift in a mostly-empty page (see the grid `:has()` guard
+   above for why it was scattering in the first place). */
+.woocommerce-account .account-auth {
+	max-width: 28rem;
+	margin: 3rem auto;
+	padding: 2rem;
+	background-color: var(--mc-color-subtle);
+	border: 0.0625rem solid rgba(0, 0, 0, 0.06);
+	border-radius: var(--mc-border-radius);
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--mc-color-dark) 5%, transparent);
+}
+
+/* Registration only adds a second `.u-column` beside the login one when
+   `woocommerce_enable_myaccount_registration` is on — widen the card to fit
+   both comfortably rather than cramping two forms into a one-form width. */
+.woocommerce-account .account-auth:has(.u-columns) {
+	max-width: 48rem;
+}
+
+.woocommerce-account .account-auth h2 {
+	font-size: 1.375rem;
+	margin-bottom: 1.5rem;
+}
+
+.woocommerce-account .account-auth .u-columns {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2rem;
+}
+
+.woocommerce-account .account-auth .u-column1,
+.woocommerce-account .account-auth .u-column2 {
+	flex: 1 1 14rem;
+}
+
+.woocommerce-account .account-auth .form-row {
+	margin-bottom: 1.25rem;
+}
+
+/* WC's markup is `<label><input type="checkbox" /> <span>Remember me</span>
+   </label>` — an inline label sizes itself to its tallest inline content
+   (the text's line-height), leaving the checkbox glyph sitting above its
+   own vertical center relative to the label text. `inline-flex` +
+   `align-items: center` centers both on the same cross-axis line instead. */
+.woocommerce-account .account-auth .woocommerce-form-login__rememberme {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-bottom: 1.25rem;
+	font-weight: 400;
+	cursor: pointer;
+}
+
+.woocommerce-account .account-auth .woocommerce-form-login__rememberme input[type="checkbox"] {
+	margin: 0;
+}
+
+.woocommerce-account .account-auth button[type="submit"] {
+	width: 100%;
+	justify-content: center;
+}
+
+.woocommerce-account .account-auth .lost_password {
+	margin-top: 1.25rem;
+	font-size: 0.9375rem;
+	text-align: center;
+}
+
+/* Password visibility toggle — WP/WC supply this control's eye-glyph icons
+   as inline-SVG `::before` backgrounds in their own (dequeued) stylesheet;
+   without that CSS the browser renders a bare, unstyled <button> — a tiny
+   grey rectangle with a heavy default border, as seen floating beneath the
+   password field. Port the actual icon pair faithfully (same paths WC ships,
+   recolored to the theme's muted/active tones) rather than invent a new
+   glyph, so the control looks exactly as intended instead of broken.
+   Deliberately unscoped to `.account-auth` — `.password-input` wraps every
+   password field WC renders (login, register, lost-password, change-password
+   in account details), and this fixes the control identically everywhere. */
+.password-input {
+	position: relative;
+	display: block;
+}
+
+.password-input .input-text {
+	padding-right: 2.75rem;
+}
+
+.show-password-input {
+	position: absolute;
+	top: 50%;
+	right: 0.875rem;
+	transform: translateY(-50%);
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background-color: transparent;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.show-password-input::before {
+	content: '';
+	display: block;
+	width: 1.375rem;
+	height: 1.375rem;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-image: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.3 3.3C16.9 2.9 16.2 2.9 15.7 3.3L13.3 5.7C12.2437 5.3079 11.1267 5.1048 10 5.1C6.2 5.2 2.8 7.2 1 10.5C1.2 10.9 1.5 11.3 1.8 11.7C2.6 12.8 3.6 13.7 4.7 14.4L3 16.1C2.6 16.5 2.5 17.2 3 17.7C3.4 18.1 4.1 18.2 4.6 17.7L17.3 4.9C17.7 4.4 17.7 3.7 17.3 3.3ZM6.7 12.3L5.4 13.6C4.2 12.9 3.1 11.9 2.3 10.7C3.5 9 5.1 7.8 7 7.2C5.7 8.6 5.6 10.8 6.7 12.3ZM10.1 9C9.6 8.5 9.7 7.7 10.2 7.2C10.7 6.8 11.4 6.8 11.9 7.2L10.1 9ZM18.3 9.5C17.8 8.8 17.2 8.1 16.5 7.6L15.5 8.6C16.3 9.2 17 9.9 17.6 10.8C15.9 13.4 13 15 9.9 15H9.1L8.1 16C8.8 15.9 9.4 16 10 16C13.3 16 16.4 14.4 18.3 11.7C18.6 11.3 18.8 10.9 19.1 10.5C18.8 10.2 18.6 9.8 18.3 9.5ZM14 10L10 14C12.2 14 14 12.2 14 10Z" fill="%239ca3af"/></svg>');
+}
+
+.show-password-input.display-password::before {
+	background-image: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.3 9.49999C15 4.89999 8.50002 3.79999 3.90002 7.19999C2.70002 8.09999 1.70002 9.29999 0.900024 10.6C1.10002 11 1.40002 11.4 1.70002 11.8C5.00002 16.4 11.3 17.4 15.9 14.2C16.8 13.5 17.6 12.8 18.3 11.8C18.6 11.4 18.8 11 19.1 10.6C18.8 10.2 18.6 9.79999 18.3 9.49999ZM10.1 7.19999C10.6 6.69999 11.4 6.69999 11.9 7.19999C12.4 7.69999 12.4 8.49999 11.9 8.99999C11.4 9.49999 10.6 9.49999 10.1 8.99999C9.60003 8.49999 9.60003 7.69999 10.1 7.19999ZM10 14.9C6.90002 14.9 4.00002 13.3 2.30002 10.7C3.50002 8.99999 5.10002 7.79999 7.00002 7.19999C6.30002 7.99999 6.00002 8.89999 6.00002 9.89999C6.00002 12.1 7.70002 14 10 14C12.2 14 14.1 12.3 14.1 9.99999V9.89999C14.1 8.89999 13.7 7.89999 13 7.19999C14.9 7.79999 16.5 8.99999 17.7 10.7C16 13.3 13.1 14.9 10 14.9Z" fill="%236d28d9"/></svg>');
+}
+
+
+/* =============================================================================
+  15. RESPONSIVE
+   ============================================================================= */
+
+@media only screen and (max-width: 991px) {
+	.woocommerce.single-product div[id^="product-"] {
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			'gallery'
+			'summary'
+			'tabs';
+		gap: 2rem;
+	}
+
+	/* minmax(0, 1fr) — not bare 1fr (= minmax(auto, 1fr)). The cart/order
+	   tables' min-content width (driven by the wrapped product-title
+	   column) exceeds the container at this breakpoint; an `auto` minimum
+	   would let the track grow to fit that content and overflow, dragging
+	   the cart-totals/order-review box along with it off-screen. */
+	.woocommerce-cart .woocommerce:has(.woocommerce-cart-form),
+	.woocommerce-checkout .woocommerce > form {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	/* Single-column layout — the sidebar now sits inline in the document
+	   flow below billing details rather than beside it, so the sticky
+	   behavior (which depends on a taller sibling column to travel
+	   alongside) would just pin it mid-scroll, blocking content beneath. */
+	.woocommerce-checkout .checkout-sidebar {
+		grid-column: 1;
+		position: static;
+	}
+
+	.woocommerce-account .woocommerce:has(.woocommerce-MyAccount-navigation) {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+}
+
+@media only screen and (max-width: 767px) {
+	.wc-main {
+		padding-top: 2.5rem;
+		padding-bottom: 3rem;
+	}
+
+	.woocommerce-ordering {
+		float: none;
+		display: block;
+		margin-bottom: 1rem;
+	}
+
+	.woocommerce-billing-fields__field-wrapper,
+	.woocommerce-shipping-fields__field-wrapper {
+		flex-direction: column;
+	}
+
+	.woocommerce-billing-fields__field-wrapper .form-row-first,
+	.woocommerce-billing-fields__field-wrapper .form-row-last,
+	.woocommerce-shipping-fields__field-wrapper .form-row-first,
+	.woocommerce-shipping-fields__field-wrapper .form-row-last {
+		flex: none;
+		width: 100%;
+	}
+
+	.woocommerce table.cart .product-thumbnail {
+		display: none;
+	}
+
+	/* Cart table → stacked cards. Four columns plus the quantity stepper
+	   need more width than a single mobile column has (their min-content
+	   is wider than the viewport), so a literal table layout would either
+	   crush the controls or overflow. WC already renders each <td> with a
+	   `data-title="Product"` etc. attribute for exactly this responsive
+	   pattern — drop the table grid, let each cell become its own row with
+	   the column name as a label pulled straight from that attribute. */
+	.woocommerce-cart table.cart,
+	.woocommerce-cart table.cart thead,
+	.woocommerce-cart table.cart tbody,
+	.woocommerce-cart table.cart tr,
+	.woocommerce-cart table.cart td {
+		display: block;
+		width: 100%;
+	}
+
+	.woocommerce-cart table.cart thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	.woocommerce-cart table.cart tr {
+		position: relative;
+		padding: 1.25rem 2.75rem 1.25rem 0;
+		border-bottom: 0.0625rem solid var(--mc-color-subtle);
+	}
+
+	/* The closing "actions" row (coupon form + Update cart) has no remove
+	   (×) button — the right padding reserved above exists only to give that
+	   absolutely-positioned control room on the product rows. Left in place
+	   here it just squeezes this row's content (and the coupon section
+	   inside it) narrower than every other row, leaving a dead gap on the
+	   right edge. Drop it so this row spans the same full card width. */
+	.woocommerce-cart table.cart tr:has(td.actions) {
+		padding-right: 0;
+	}
+
+	.woocommerce-cart table.cart tr:first-child {
+		border-top: 0.0625rem solid var(--mc-color-subtle);
+	}
+
+	.woocommerce-cart table.cart td {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.375rem 0;
+		border-bottom: none;
+		text-align: right;
+	}
+
+	.woocommerce-cart table.cart td::before {
+		content: attr(data-title);
+		font-weight: 700;
+		text-align: left;
+		color: var(--mc-color-text);
+	}
+
+	/* Remove (×) sits as an absolutely-positioned corner control rather
+	   than its own labeled row — it's an icon-only action, not data. */
+	.woocommerce-cart table.cart td.product-remove {
+		position: absolute;
+		top: 1.25rem;
+		right: 0;
+		display: block;
+		padding: 0;
+	}
+
+	.woocommerce-cart table.cart td.product-remove::before {
+		content: none;
+	}
+
+	.woocommerce-cart table.cart td.product-name {
+		align-items: flex-start;
+	}
+
+	.woocommerce-cart table.cart td.product-name::before {
+		padding-top: 0.125rem;
+	}
+
+	/* `td.actions` houses the coupon form and (for no-JS visitors, see
+	   `mc-cart-instant-update`) the "Update cart" button. The generic cart-row
+	   layout above sizes flex items to their content and centers them, so
+	   here that left the coupon form pinched to its own content width with
+	   dead space either side instead of spanning the row. Stack its children
+	   and stretch them across the full width — each then reads as its own
+	   full-width control. */
+	.woocommerce-cart table.cart td.actions {
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+		gap: 1rem;
+	}
+
+	/* The "actions" cell's `text-align: right` (set above for the stacked
+	   label/value cart rows) would otherwise cascade down into the coupon
+	   form's input, button, and error text, pulling them rightward/inward
+	   too. Reset it here, and stack the row's children at full width —
+	   side by side, the button ends up narrower than the input it sits
+	   beside and the pair reads as misaligned; stacked and stretched, both
+	   span the same width and read as one cohesive control. */
+	.coupon {
+		flex-direction: column;
+		align-items: stretch;
+		text-align: left;
+	}
+}

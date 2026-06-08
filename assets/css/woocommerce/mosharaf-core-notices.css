@@ -1,0 +1,184 @@
+/**
+ * Mosharaf Core — WooCommerce Notices
+ *
+ * Styles WC's success/error/info notices (`wc_print_notices()`'s
+ * `.woocommerce-notices-wrapper`) as polished, card-level alerts —
+ * matching `.wc-product-card`'s border/shadow language — with a
+ * CSS-drawn circular status badge in place of WC's plain colored
+ * accent bar (a border-left + border-radius combination renders as a
+ * disconnected floating pill, so the badge carries the status signal
+ * instead).
+ *
+ * Deliberately global and standalone — `.woocommerce-notices-wrapper`
+ * appears on single-product, cart, checkout, my-account, and anywhere
+ * else WC prints a notice, and this control should look identical
+ * everywhere regardless of how other WooCommerce templates are themed
+ * per project. Pulls only the theme's design tokens, so a token change
+ * restyles it automatically with no code edits.
+ *
+ * @package mosharaf-core
+ */
+
+.woocommerce-notices-wrapper {
+	margin-bottom: 1.5rem;
+}
+
+/* .message/.info are left as plain blocks — WC's markup is just text
+   followed by an inline link ("…added to your cart. View cart"), so normal
+   inline flow lets the link sit right after the sentence when there's room
+   and wrap onto its own line as a whole word when there isn't (no flexbox
+   needed; flex would force the link onto its own "row" even when it could
+   fit inline). .error is the exception — it's a <ul> of multiple messages,
+   so it keeps flex column to stack them.
+
+   The badge is absolutely positioned (not a flex/inline participant) so it
+   reads correctly regardless of how the text above wraps. Selectors are
+   scoped to .woocommerce-notices-wrapper (WC's actual notice wrapper) rather
+   than the bare classes — needed so this beats the theme's
+   `.entry-content ul { padding-left }` rule, which otherwise wins on
+   specificity against a single-class selector and overrides our
+   padding-left (the badge's reserved space) on My Account / page-content
+   contexts. */
+.woocommerce-notices-wrapper .woocommerce-message,
+.woocommerce-notices-wrapper .woocommerce-error,
+.woocommerce-notices-wrapper .woocommerce-info,
+/* WC prints the "no available payment methods" fallback as a bare
+   `.woocommerce-info` div directly inside `#payment` — it's a payment-method
+   list item, not a page notice, so it never lands in `.woocommerce-notices-
+   wrapper` and would otherwise show as plain unstyled text floating in the
+   middle of an otherwise-designed checkout card. Folding it into this same
+   rule set gives it the identical tinted-card-with-icon look for free,
+   rather than re-declaring the whole treatment under a second selector. */
+.woocommerce-checkout #payment .woocommerce-info {
+	position: relative;
+	padding: 1rem 1.25rem 1rem 3.25rem;
+	border: 0.0625rem solid transparent;
+	border-radius: var(--mc-border-radius);
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--mc-color-dark) 6%, transparent);
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	list-style: none;
+	margin: 0 0 1rem;
+}
+
+.woocommerce-notices-wrapper .woocommerce-message::before,
+.woocommerce-notices-wrapper .woocommerce-error::before,
+.woocommerce-notices-wrapper .woocommerce-info::before,
+.woocommerce-checkout #payment .woocommerce-info::before {
+	position: absolute;
+	top: 1rem;
+	left: 1.25rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	border-radius: 50%;
+	font-size: 0.75rem;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--mc-color-light);
+}
+
+.woocommerce-notices-wrapper .woocommerce-message {
+	background-color: #ecfdf5;
+	border-color: color-mix(in srgb, #10b981 20%, transparent);
+	color: #065f46;
+}
+
+.woocommerce-notices-wrapper .woocommerce-message::before {
+	content: '\2713';
+	background-color: #10b981;
+}
+
+.woocommerce-notices-wrapper .woocommerce-error {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.25rem;
+	background-color: #fef2f2;
+	border-color: color-mix(in srgb, #ef4444 20%, transparent);
+	color: #991b1b;
+}
+
+.woocommerce-notices-wrapper .woocommerce-error::before {
+	content: '\2715';
+	background-color: #ef4444;
+}
+
+.woocommerce-notices-wrapper .woocommerce-error li {
+	list-style: none;
+}
+
+.woocommerce-notices-wrapper .woocommerce-info,
+.woocommerce-checkout #payment .woocommerce-info {
+	background-color: color-mix(in srgb, var(--mc-color-primary) 8%, transparent);
+	border-color: color-mix(in srgb, var(--mc-color-primary) 20%, transparent);
+	color: var(--mc-color-primary);
+}
+
+.woocommerce-notices-wrapper .woocommerce-info::before,
+.woocommerce-checkout #payment .woocommerce-info::before {
+	content: 'i';
+	font-style: italic;
+	background-color: var(--mc-color-primary);
+}
+
+/* All notice action links — including WC's `.button`-classed ones like
+   "View cart" / "Undo?" / "Continue shopping" — read as plain inline
+   underlined text rather than backgrounded buttons, so they sit naturally
+   in the sentence instead of competing visually with the page's real
+   add-to-cart / checkout CTAs. Resets the global `.woocommerce a.button`
+   chrome (background, border, padding, shadow) back to bare text.
+   `white-space: nowrap` keeps the link's words glued together — so on
+   narrow viewports it wraps onto its own line as a whole unit ("View cart")
+   rather than breaking mid-word ("View" / "cart") when the message text
+   crowds it. */
+.woocommerce-notices-wrapper .woocommerce-message a,
+.woocommerce-notices-wrapper .woocommerce-error a,
+.woocommerce-notices-wrapper .woocommerce-info a,
+.woocommerce-notices-wrapper .woocommerce-message .button,
+.woocommerce-notices-wrapper .woocommerce-error .button,
+.woocommerce-notices-wrapper .woocommerce-info .button {
+	display: inline;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	color: var(--mc-color-primary);
+	font-size: inherit;
+	white-space: nowrap;
+	font-weight: 600;
+	line-height: inherit;
+	text-decoration: underline;
+	transition: color var(--mc-transition);
+}
+
+.woocommerce-notices-wrapper .woocommerce-message a:hover,
+.woocommerce-notices-wrapper .woocommerce-error a:hover,
+.woocommerce-notices-wrapper .woocommerce-info a:hover,
+.woocommerce-notices-wrapper .woocommerce-message .button:hover,
+.woocommerce-notices-wrapper .woocommerce-error .button:hover,
+.woocommerce-notices-wrapper .woocommerce-info .button:hover {
+	color: var(--mc-color-secondary);
+	background: none;
+}
+
+/* WC focuses notices on load for screen-reader users (tabindex="-1" +
+   .focus()), which triggers the theme's global :focus-visible ring. Left
+   at the default brand-purple it reads as a mismatched border slapped on
+   top of a green/red notice — recolor it to each notice's own palette so
+   it looks intentional while keeping the accessibility benefit. */
+.woocommerce-notices-wrapper .woocommerce-message:focus-visible {
+	outline-color: #10b981;
+}
+
+.woocommerce-notices-wrapper .woocommerce-error:focus-visible {
+	outline-color: #ef4444;
+}
+
+.woocommerce-notices-wrapper .woocommerce-info:focus-visible {
+	outline-color: var(--mc-color-primary);
+}

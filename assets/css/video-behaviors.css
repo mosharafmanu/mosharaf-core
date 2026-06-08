@@ -1,0 +1,282 @@
+/**
+ * Video Behaviors Styles
+ *
+ * Styles for different video behaviors:
+ * - hover: Play on hover, pause on leave
+ * - autoplay: Custom play/pause and mute/unmute controls
+ * - onclick-popup: Opens video in modal with trigger overlay
+ *
+ * CUSTOMIZE: Update CSS custom properties in your theme's main CSS file:
+ * --my-theme-white: #FFFFFF;
+ * --my-theme-green-mid: #4AB2A9;
+ */
+
+/* ============================================
+   GENERAL VIDEO CONTAINER STYLES
+   ============================================ */
+
+.video-container {
+	height: 100%;
+}
+
+.video-container video {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+/* ============================================
+   HOVER BEHAVIOR STYLES
+   ============================================ */
+
+.video-container[data-behavior="hover"] {
+	overflow: hidden;
+}
+
+.video-container[data-behavior="hover"] video {
+	transition: transform 0.3s ease;
+}
+
+/* ============================================
+   AUTOPLAY BEHAVIOR STYLES
+   ============================================ */
+
+.video-container[data-behavior="autoplay"] {
+	position: relative;
+}
+
+/* ============================================
+   CUSTOM AUTOPLAY CONTROLS
+   ============================================ */
+
+.video-autoplay-controls {
+	position: absolute;
+	bottom: 1.5625rem;
+	right: 1.5625rem;
+	display: flex;
+	gap: 1.5625rem;
+	z-index: 20;
+	opacity: 1;
+	transition: opacity 0.3s ease;
+}
+
+/* Low power mode overlay for autoplay-on-scroll */
+.video-low-power-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.3);
+	display: none; /* Hidden by default */
+	align-items: center;
+	justify-content: center;
+	z-index: 30;
+	cursor: pointer;
+}
+
+.video-low-power-overlay.show {
+	display: flex; /* Show when autoplay fails */
+}
+
+.low-power-play-btn {
+	pointer-events: auto;
+}
+
+.video-control-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 3.125rem;
+	height: 3.125rem;
+	border: none;
+	border-radius: 50%;
+	background-color: var(--mc-color-accent);
+	border: 1px solid var(--mc-color-light);
+	color: #000;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	padding: 0;
+	flex-shrink: 0;
+}
+
+.video-control-btn:hover {
+	transform: scale(1.1);
+}
+
+.video-control-btn:active {
+	transform: scale(0.95);
+}
+
+.video-control-btn svg {
+	fill: currentColor;
+}
+
+.video-play-pause-btn svg {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.video-mute-btn svg {
+	width: 1.375rem;
+	height: 1.375rem;
+}
+
+/* ============================================
+   PLAY/PAUSE ICON STATES
+   ============================================ */
+
+.video-play-pause-btn .play-icon {
+	display: block;
+	position: relative;
+	left: 0.125rem;
+}
+
+.video-play-pause-btn .pause-icon {
+	display: none;
+}
+
+.video-play-pause-btn.playing .play-icon {
+	display: none;
+}
+
+.video-play-pause-btn.playing .pause-icon {
+	display: block;
+}
+
+/* ============================================
+   MUTE/UNMUTE ICON STATES
+   ============================================ */
+
+.video-mute-btn .unmute-icon {
+	display: block;
+}
+
+.video-mute-btn .mute-icon {
+	display: none;
+}
+
+.video-mute-btn.muted .unmute-icon {
+	display: none;
+}
+
+.video-mute-btn.muted .mute-icon {
+	display: block;
+}
+
+/* ============================================
+   ONCLICK-POPUP BEHAVIOR STYLES
+   ============================================ */
+
+.video-container[data-behavior="onclick-popup"] {
+	position: relative;
+	cursor: pointer;
+}
+
+.video-play-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.3);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+	cursor: pointer;
+	transition: background 0.3s ease;
+}
+
+.video-play-overlay:hover {
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.video-play-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 4.375rem;
+	height: 4.375rem;
+	border: none;
+	border-radius: 50%;
+	background-color: var(--mc-color-accent);
+	color: #000;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	padding: 0;
+	flex-shrink: 0;
+}
+
+.video-play-button:hover {
+	transform: scale(1.1);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.video-play-button:active {
+	transform: scale(0.95);
+}
+
+.video-play-button svg {
+	width: 1.5rem;
+	height: 1.5rem;
+	fill: currentColor;
+	margin-left: 0.125rem;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS - TABLET
+   ============================================ */
+
+@media (max-width: 768px) {
+	.video-container[data-behavior="hover"]:hover video {
+		transform: scale(1.01);
+	}
+
+	.video-play-button {
+		width: 3.75rem;
+		height: 3.75rem;
+	}
+
+	.video-play-button svg {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS - MOBILE
+   ============================================ */
+
+@media (max-width: 480px) {
+	.video-autoplay-controls {
+		bottom: 1.25rem;
+		right: 1.25rem;
+		gap: 0.9375rem;
+	}
+
+	.video-play-button {
+		width: 3.125rem;
+		height: 3.125rem;
+	}
+
+	.video-play-button svg {
+		width: 1rem;
+		height: 1rem;
+	}
+}
+
+/* ============================================
+   ACCESSIBILITY STYLES
+   ============================================ */
+
+.video-play-button:focus {
+	outline: 2px solid #fff;
+	outline-offset: 2px;
+}
+
+.video-play-button:focus:not(:focus-visible) {
+	outline: none;
+}
+
+

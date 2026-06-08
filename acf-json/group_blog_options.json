@@ -1,0 +1,494 @@
+{
+    "key": "group_blog_options",
+    "title": "Blog Options",
+    "fields": [
+        {
+            "key": "field_blogopt_tab_content",
+            "label": "Content",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_blogopt_title",
+            "label": "Hero Title",
+            "name": "blog_hero_title",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Enter the main heading for the hero section. Use line breaks for multi-line text.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": "Blog",
+            "new_lines": ""
+        },
+        {
+            "key": "field_blogopt_description",
+            "label": "Hero Description",
+            "name": "blog_hero_description",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Enter the description text below the title.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "rows": 4,
+            "placeholder": "",
+            "new_lines": "wpautop"
+        },
+        {
+            "key": "field_blogopt_tab_media",
+            "label": "Media",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_blogopt_media_type",
+            "label": "Media Type",
+            "name": "blog_hero_media_type",
+            "aria-label": "",
+            "type": "button_group",
+            "instructions": "Choose whether to display an image or video.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "image": "Image",
+                "video": "Video"
+            },
+            "default_value": "image",
+            "return_format": "value",
+            "allow_null": 0,
+            "layout": "horizontal"
+        },
+        {
+            "key": "field_blogopt_image",
+            "label": "Hero Image",
+            "name": "blog_hero_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Upload the background image for the hero section.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_blogopt_media_type",
+                        "operator": "==",
+                        "value": "image"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_blogopt_video",
+            "label": "Hero Video",
+            "name": "blog_hero_video",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Configure the background video for the hero section.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_blogopt_media_type",
+                        "operator": "==",
+                        "value": "video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_blogopt_video_source",
+                    "label": "Video Source",
+                    "name": "video_source",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "self_host": "Self-Hosted (WordPress Media)",
+                        "youtube": "YouTube",
+                        "vimeo": "Vimeo",
+                        "cdn": "CDN\/External URL"
+                    },
+                    "default_value": "self_host",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0
+                },
+                {
+                    "key": "field_blogopt_video_self_host_file",
+                    "label": "Video File",
+                    "name": "video_self_host_file",
+                    "aria-label": "",
+                    "type": "file",
+                    "instructions": "Upload MP4 video file.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_source",
+                                "operator": "==",
+                                "value": "self_host"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_size": "",
+                    "max_size": "",
+                    "mime_types": "mp4,webm"
+                },
+                {
+                    "key": "field_blogopt_video_self_host_poster",
+                    "label": "Poster Image",
+                    "name": "video_self_host_poster",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "Thumbnail shown before video plays.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_source",
+                                "operator": "==",
+                                "value": "self_host"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "preview_size": "medium"
+                },
+                {
+                    "key": "field_blogopt_video_youtube_url",
+                    "label": "YouTube URL",
+                    "name": "video_youtube_url",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "Enter YouTube video URL.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_source",
+                                "operator": "==",
+                                "value": "youtube"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "https:\/\/www.youtube.com\/watch?v=..."
+                },
+                {
+                    "key": "field_blogopt_video_vimeo_url",
+                    "label": "Vimeo MP4 URL",
+                    "name": "video_vimeo_url",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "Enter Vimeo MP4 direct URL.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_source",
+                                "operator": "==",
+                                "value": "vimeo"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "https:\/\/player.vimeo.com\/..."
+                },
+                {
+                    "key": "field_blogopt_video_vimeo_poster",
+                    "label": "Vimeo Poster Image",
+                    "name": "video_vimeo_poster",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "Upload a poster image to display before the video plays.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_source",
+                                "operator": "==",
+                                "value": "vimeo"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "preview_size": "medium"
+                },
+                {
+                    "key": "field_blogopt_video_cdn_url",
+                    "label": "CDN Video URL",
+                    "name": "video_cdn_url",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "Enter CDN or external video URL.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_source",
+                                "operator": "==",
+                                "value": "cdn"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "https:\/\/cdn.example.com\/video.mp4"
+                },
+                {
+                    "key": "field_blogopt_video_cdn_poster",
+                    "label": "CDN Poster Image",
+                    "name": "video_cdn_poster",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "Upload a poster image to display before the video plays.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_source",
+                                "operator": "==",
+                                "value": "cdn"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "preview_size": "medium"
+                },
+                {
+                    "key": "field_blogopt_video_behavior",
+                    "label": "Video Behavior",
+                    "name": "video_behavior",
+                    "aria-label": "",
+                    "type": "button_group",
+                    "instructions": "Choose how the video should behave.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "autoplay": "Autoplay (Muted, Looped)",
+                        "hover": "Play on Hover",
+                        "onclick-popup": "Click to Open Popup"
+                    },
+                    "default_value": "autoplay",
+                    "return_format": "value",
+                    "allow_null": 0,
+                    "layout": "horizontal"
+                },
+                {
+                    "key": "field_blogopt_video_autoplay_on_scroll",
+                    "label": "Autoplay on Scroll",
+                    "name": "autoplay_on_scroll",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "Enable to play video only when scrolled into viewport (saves bandwidth and improves performance).",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_behavior",
+                                "operator": "==",
+                                "value": "autoplay"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui_on_text": "Yes",
+                    "ui_off_text": "No",
+                    "ui": 1
+                },
+                {
+                    "key": "field_blogopt_video_controls_visibility",
+                    "label": "Show Video Controls",
+                    "name": "controls_visibility",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "Show custom play\/pause and mute\/unmute controls for the video.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_blogopt_video_behavior",
+                                "operator": "==",
+                                "value": "autoplay"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui_on_text": "Show",
+                    "ui_off_text": "Hide",
+                    "ui": 1
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "blog-options"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Configure the blog archive page hero section including title, description, background media (image or video), and call-to-action buttons.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "modified": 1770261200
+}

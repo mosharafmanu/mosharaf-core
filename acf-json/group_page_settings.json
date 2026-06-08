@@ -1,0 +1,46 @@
+{
+    "key": "group_page_settings",
+    "title": "Page Settings",
+    "fields": [
+        {
+            "key": "field_show_page_title",
+            "label": "Show Page Title",
+            "name": "show_page_title",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Control the visibility of the page title in the top of the page. <strong>Note:<\/strong> This setting only applies when using the fallback content template (standard WordPress editor). When using the Page Builder (Flexible Content) below, this setting is ignored.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 1,
+            "ui_on_text": "Show Title",
+            "ui_off_text": "Hide Title",
+            "ui": 1
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Configure page-level display settings. These settings control how the page is rendered when not using the Page Builder.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "modified": 1768236061
+}

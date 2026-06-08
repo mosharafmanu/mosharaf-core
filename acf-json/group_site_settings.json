@@ -1,0 +1,257 @@
+{
+    "key": "group_site_settings",
+    "title": "Site Settings",
+    "fields": [
+        {
+            "key": "field_header_settings_tab",
+            "label": "Header Settings",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_site_logo",
+            "label": "Site Logo",
+            "name": "site_logo",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Upload your site logo. Recommended size: 112x69px. Supports PNG, JPG, SVG formats.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "jpg,jpeg,png,svg",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_header_button",
+            "label": "Header Button",
+            "name": "header_button",
+            "aria-label": "",
+            "type": "link",
+            "instructions": "Configure the header call-to-action button (e.g., 'Contact us'). Text is shown on desktop, phone icon on mobile.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array"
+        },
+        {
+            "key": "field_header_button_mobile_phone",
+            "label": "Header Button Mobile Phone",
+            "name": "header_button_mobile_phone",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Used for the mobile header phone icon link at 1199px and below. Enter a callable phone number.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "+44 (0)1923 839333",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_footer_settings_tab",
+            "label": "Footer Settings",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_footer_tagline",
+            "label": "Footer Tagline",
+            "name": "footer_tagline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Short description displayed below the footer logo. Supports line breaks.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g., Building better websites since 2010.",
+            "rows": 3,
+            "new_lines": "br"
+        },
+        {
+            "key": "field_footer_logo",
+            "label": "Footer Logo",
+            "name": "footer_logo",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Upload your footer logo. If not set, the main site logo will be used. Recommended size: 112x69px. Supports PNG, JPG, SVG formats.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "jpg,jpeg,png,svg",
+            "allow_in_bindings": 1,
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_social_medias",
+            "label": "Social Media Links",
+            "name": "social_medias",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Add your social media profiles. Upload an icon (SVG recommended for best quality) and provide the link to your profile.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add Social Media",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_social_icon",
+                    "label": "Icon",
+                    "name": "social_icon",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "svg,png,jpg",
+                    "preview_size": "thumbnail",
+                    "parent_repeater": "field_social_medias"
+                },
+                {
+                    "key": "field_social_link",
+                    "label": "Link",
+                    "name": "social_link",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "https://",
+                    "parent_repeater": "field_social_medias"
+                }
+            ]
+        },
+        {
+            "key": "field_footer_copyright",
+            "label": "Copyright Text",
+            "name": "footer_copyright",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Enter the copyright text to display in the footer. You can use dynamic year by including {year} which will be replaced automatically.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g., ©mosharaf-core UK - 2025. All rights reserved.",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "site-settings"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Configure global site settings including header logo, footer logo, social media links, and footer content.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "modified": 1778823171
+}

@@ -1,0 +1,124 @@
+{
+    "key": "group_flexible_content",
+    "title": "Page Builder",
+    "fields": [
+        {
+            "key": "field_cms",
+            "label": "Content Sections",
+            "name": "cms",
+            "aria-label": "",
+            "type": "flexible_content",
+            "instructions": "Build your page by adding and arranging content sections below. Each section is a modular layout component that you can customize independently. Drag sections to reorder them, and use the collapse/expand controls to manage your workspace efficiently. <strong>Note:</strong> When using the Page Builder, the standard WordPress content editor is hidden and the 'Show Page Title' setting in the sidebar is ignored.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layouts": {
+                "layout_example_section": {
+                    "key": "layout_example_section",
+                    "name": "example_section",
+                    "label": "Example Section",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_example_title",
+                            "label": "Title",
+                            "name": "title",
+                            "type": "text",
+                            "required": 0,
+                            "instructions": "Section heading text.",
+                            "placeholder": "Section Title"
+                        },
+                        {
+                            "key": "field_example_description",
+                            "label": "Description",
+                            "name": "description",
+                            "type": "wysiwyg",
+                            "required": 0,
+                            "instructions": "Body text. Supports basic HTML.",
+                            "tabs": "all",
+                            "toolbar": "basic",
+                            "media_upload": 0
+                        },
+                        {
+                            "key": "field_example_button_link",
+                            "label": "Button Link",
+                            "name": "button_link",
+                            "type": "link",
+                            "required": 0,
+                            "instructions": "Optional CTA button. Leave empty to hide."
+                        },
+                        {
+                            "key": "field_example_image",
+                            "label": "Image",
+                            "name": "image",
+                            "type": "image",
+                            "required": 0,
+                            "instructions": "Optional section image.",
+                            "return_format": "array",
+                            "preview_size": "medium"
+                        },
+                        {
+                            "key": "field_example_background_color",
+                            "label": "Background Colour",
+                            "name": "background_color",
+                            "type": "select",
+                            "required": 0,
+                            "instructions": "Controls the section background via .bg-mc-{value} utility class. Values map to CSS tokens: light=--mc-color-light, subtle=--mc-color-subtle, primary=--mc-color-primary, dark=--mc-color-dark.",
+                            "choices": {
+                                "light": "Light (White)",
+                                "subtle": "Subtle (Light Grey)",
+                                "primary": "Primary Brand",
+                                "dark": "Dark"
+                            },
+                            "default_value": "light",
+                            "allow_null": 0
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                }
+            },
+            "min": "",
+            "max": "",
+            "button_label": "Add Section"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            }
+        ],
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post"
+            }
+        ],
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "product"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Flexible content page builder for creating custom page layouts. Build pages using modular, reusable content sections that can be arranged in any order to create unique page designs.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "modified": 1778837369
+}

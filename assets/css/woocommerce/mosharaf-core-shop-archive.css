@@ -1,0 +1,488 @@
+/**
+ * Mosharaf Core — Shop Archive Layout & Filters
+ *
+ * Standalone, optional piece of the WooCommerce module: styles the sidebar-
+ * filter + toolbar + grid layout registered by inc/woocommerce/shop-archive.php
+ * and its template parts (shop-hero, shop-toolbar, shop-filters). Removable
+ * independently of the rest of the module — without it (and its hooks file),
+ * the shop falls back to WooCommerce's stock archive layout, still themed by
+ * mosharaf-core-woocommerce.css. The product grid itself is NOT styled here:
+ * it uses the theme-wide `.card-grid`/`.columns-N` system (loop/loop-start.php
+ * + mosharaf-core-design-style.css), so columns stay consistent with every
+ * other card grid in the theme.
+ *
+ * @package mosharaf-core
+ */
+
+/*
+====================================================
+Shop Hero
+====================================================
+*/
+
+.shop-hero {
+	padding-top: 3.125rem;
+	padding-bottom: 3.125rem;
+}
+
+.shop-hero-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	align-items: center;
+	gap: 1.875rem;
+}
+
+.shop-hero.has-image .shop-hero-grid {
+	grid-template-columns: 1fr 1fr;
+}
+
+.shop-hero-title {
+	margin: 0 0 0.9375rem;
+	color: var(--mc-color-heading);
+}
+
+.shop-hero-description {
+	color: var(--mc-color-text);
+}
+
+.shop-hero-media,
+.shop-hero-image {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: var(--mc-border-radius);
+}
+
+@media only screen and (max-width: 767px) {
+	.shop-hero.has-image .shop-hero-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/*
+====================================================
+Shop Grid Layout — sidebar + toolbar + content
+====================================================
+*/
+
+.shop-page-wrapper {
+	padding-top: 1.875rem; /* 30px */
+	padding-bottom: 1.875rem;
+}
+
+.shop-grid {
+	display: grid;
+	grid-template-columns: 21.875rem 1fr; /* 350px sidebar */
+	grid-template-areas:
+		"header  header"
+		"sidebar content";
+	align-items: start;
+	column-gap: 1.5625rem; /* 25px */
+	transition: grid-template-columns 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+	            column-gap 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shop-grid.filters-hidden {
+	grid-template-columns: 0 1fr;
+	column-gap: 0;
+}
+
+/* Toolbar — spans both columns */
+
+.shop-toolbar {
+	grid-area: header;
+}
+
+.shop-toolbar-inner {
+	display: grid;
+	/* Last track sized to the ordering control's own content rather than a
+	   fixed rem value — mosharaf-core's select needs more horizontal room
+	   than purple-surgical's (custom arrow + padding vs. a bare 110px native
+	   control), so a fixed track here clipped/overflowed it. */
+	grid-template-columns: 21.875rem 1fr 1fr max-content;
+	align-items: center;
+	gap: 1.25rem;
+	background: var(--mc-color-light);
+	border-top: 0.0625rem solid var(--mc-color-primary);
+	border-bottom: 0.0625rem solid var(--mc-color-primary);
+	padding: 0.875rem 0; /* 14px */
+	margin-bottom: 0.9375rem; /* 15px */
+}
+
+.filter-toggle-btn {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: inherit;
+	appearance: none;
+	outline: none;
+	padding: 0;
+	margin: 0;
+}
+
+.filter-toggle-btn .filters-label {
+	font-size: 1.1875rem; /* 19px */
+	font-weight: 700;
+	line-height: 120%;
+	display: flex;
+	align-items: center;
+	gap: 0.9375rem; /* 15px */
+	color: var(--mc-color-primary);
+}
+
+.filter-toggle-text-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 0.9375rem; /* 15px */
+}
+
+.filter-toggle-btn .filter-toggle-text {
+	font-size: 1.125rem; /* 18px */
+	line-height: 150%;
+	font-weight: 400;
+}
+
+.filter-toggle-btn .filter-icon {
+	width: 1.125rem;
+	display: block;
+	color: var(--mc-color-primary);
+}
+
+.filter-toggle-btn .filter-icon svg {
+	width: 100%;
+	display: block;
+}
+
+/* Result count + ordering */
+
+.result-count-wrapper {
+	grid-column: span 2;
+	text-align: right;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.woocommerce-result-count {
+	font-size: 1.0625rem;
+	font-weight: 400;
+	line-height: 150%;
+	flex: 0 0 auto;
+	margin-left: auto;
+}
+
+/* Sizing/padding/arrow for the <select> itself come from the theme-wide
+   .woocommerce-ordering select rule (mosharaf-core-woocommerce.css) — that's
+   what reserves room for the custom dropdown-arrow icon and matches every
+   other styled select in the theme. This wrapper only positions the control
+   within the toolbar; it must NOT re-pin the select's width/padding (purple
+   surgical's narrow fixed-width + zero-padding values were tuned for a plain
+   browser-default select and clip/overlap mosharaf-core's custom arrow icon). */
+.woocommerce-ordering-wrapper {
+	max-width: max-content;
+	margin-left: auto;
+}
+
+/* mosharaf-core-woocommerce.css's .woocommerce-ordering rule carries
+   `float: right; margin-bottom: 1.5rem;` — tuned for the default archive's
+   ordering bar sitting on its own line above the loop. Reprinted inside our
+   grid toolbar, that bottom margin inflates the form's box height beyond the
+   <select>'s own (63px vs 39px), so `align-items: center` centers it a few
+   pixels higher than the result-count text beside it. Neutralise both so the
+   form's box matches its child <select> exactly. */
+.woocommerce-ordering-wrapper .woocommerce-ordering {
+	float: none;
+	margin-bottom: 0;
+	display: block;
+}
+
+.result-count-wrapper-mobile {
+	display: none;
+}
+
+/* Sidebar */
+
+.shop-sidebar {
+	grid-area: sidebar;
+	position: sticky;
+	top: 1.25rem;
+	max-height: calc(100vh - 2.5rem);
+	overflow-y: auto;
+	overflow-x: hidden;
+	opacity: 1;
+	visibility: visible;
+	transform: translateX(0);
+	transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+	            opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+	            visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shop-grid.filters-hidden .shop-sidebar {
+	opacity: 0;
+	visibility: hidden;
+	transform: translateX(-100%);
+	pointer-events: none;
+}
+
+/* Content column */
+
+.shop-content {
+	grid-area: content;
+	min-width: 0;
+}
+
+/*
+====================================================
+Filter Sidebar
+====================================================
+*/
+
+.product-filters {
+	background: var(--mc-color-light);
+	position: relative;
+}
+
+.filters-close-btn {
+	display: none;
+	position: absolute;
+	top: 1.25rem;
+	right: 1.25rem;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 0.5rem;
+	width: 2.5rem;
+	height: 2.5rem;
+	align-items: center;
+	justify-content: center;
+	color: var(--mc-color-primary);
+	transition: opacity var(--mc-transition);
+	z-index: 10;
+}
+
+.filters-close-btn:hover {
+	opacity: 0.7;
+}
+
+.filters-close-btn svg {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.filter-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	row-gap: 0.625rem; /* 10px */
+}
+
+.filter-list li .filter-link {
+	border: none;
+	text-decoration: none;
+	padding: 1.125rem 0.9375rem; /* 18px 15px */
+	background: var(--mc-color-subtle);
+	border-radius: var(--mc-border-radius);
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	text-align: left;
+	color: var(--mc-color-primary);
+	font-size: 1.1875rem; /* 19px */
+	font-weight: 700;
+	line-height: 120%;
+	transition: var(--mc-transition);
+	cursor: pointer;
+}
+
+.filter-list li .filter-link.active,
+.filter-list li .filter-parent-link.is-open {
+	background: var(--mc-color-primary);
+	color: var(--mc-color-light);
+}
+
+.filter-list li .filter-link:hover:not(.active):not(.is-open) {
+	background: var(--mc-color-mid);
+	color: var(--mc-color-light);
+}
+
+.filter-name {
+	min-width: 0;
+}
+
+.filter-chevron {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 0.9375rem;
+	transition: transform 0.25s ease;
+}
+
+.filter-chevron svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.filter-parent-link.active .filter-chevron svg path,
+.filter-parent-link.is-open .filter-chevron svg path {
+	fill: none;
+	stroke: currentColor;
+}
+
+.filter-sub-list {
+	list-style: none;
+	margin: 0.3125rem 0 0 0.9375rem; /* 5px 0 0 15px */
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	row-gap: 0.3125rem; /* 5px */
+}
+
+.filter-sub-list[hidden] {
+	display: none;
+}
+
+.filter-sub-list li .filter-sub-link {
+	color: var(--mc-color-secondary);
+	padding: 1.125rem 0.9375rem; /* 18px 15px */
+}
+
+.filter-sub-list .filter-sub-link.active {
+	background: var(--mc-color-primary);
+	color: var(--mc-color-light);
+}
+
+.filter-count {
+	color: var(--mc-color-mid);
+	font-size: 0.875rem; /* 14px */
+	display: none;
+}
+
+.clear-filters-wrapper {
+	text-align: center;
+	margin-top: 2.5rem; /* 40px */
+}
+
+.clear-filters-btn {
+	color: var(--mc-color-primary);
+}
+
+/*
+====================================================
+Responsive
+====================================================
+*/
+
+@media only screen and (max-width: 1399px) {
+	.shop-toolbar-inner {
+		grid-template-columns: 21.875rem 1fr 1fr max-content;
+	}
+}
+
+@media only screen and (max-width: 1199px) {
+	.shop-grid {
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			"header"
+			"content";
+	}
+
+	.shop-sidebar {
+		position: fixed;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		max-width: 25rem; /* 400px */
+		height: 100vh;
+		max-height: 100vh;
+		background: var(--mc-color-light);
+		z-index: 9999;
+		overflow-y: auto;
+		transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+		opacity: 1;
+		visibility: visible;
+		transform: none;
+	}
+
+	.shop-grid.filters-visible .shop-sidebar {
+		left: 0;
+	}
+
+	.shop-grid.filters-visible::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 9998;
+	}
+
+	.filters-close-btn {
+		display: flex;
+	}
+
+	.product-filters {
+		height: 100%;
+		padding: 5rem 1.875rem 1.875rem; /* extra top padding for close button */
+	}
+
+	.filters-section {
+		max-width: 100%;
+	}
+
+	.filter-toggle-text-wrapper {
+		display: none;
+	}
+
+	.shop-toolbar-inner {
+		grid-template-columns: 1fr 1fr;
+		gap: 0;
+		margin-bottom: 0;
+	}
+
+	.shop-toolbar {
+		margin-bottom: 1.875rem; /* 30px */
+	}
+
+	.result-count-wrapper {
+		display: none;
+	}
+
+	.result-count-wrapper-mobile {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		margin-top: 0.625rem;
+	}
+
+	.woocommerce-result-count {
+		margin-left: 0;
+	}
+
+	.woocommerce-ordering-wrapper {
+		margin-left: auto;
+	}
+}
+
+@media only screen and (max-width: 767px) {
+	.filter-toggle-btn .filters-label {
+		font-size: 1rem;
+	}
+
+	.woocommerce-ordering-wrapper {
+		width: 100%;
+	}
+
+	.shop-toolbar-inner {
+		grid-template-columns: 1fr 1fr;
+	}
+}

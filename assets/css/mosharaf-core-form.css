@@ -1,0 +1,252 @@
+/*
+====================================================
+Form Styles — native HTML form elements only.
+====================================================
+*/
+
+/* ── Placeholders ────────────────────────────────────────────────────────── */
+
+input::placeholder,
+textarea::placeholder {
+	color: var(--mc-color-mid);
+	opacity: 1;
+}
+
+/* ── Labels ──────────────────────────────────────────────────────────────── */
+
+label,
+.form-label,
+form label {
+	font-size: 0.9375rem;
+	font-weight: 600;
+	line-height: 1.5;
+	color: var(--mc-color-text);
+	display: block;
+	margin-bottom: 0.375rem;
+}
+
+/* ── Field containers ────────────────────────────────────────────────────── */
+
+.field,
+.form-field {
+	margin-bottom: 1.25rem;
+}
+
+/* ── Text inputs, select & textarea ─────────────────────────────────────── */
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="password"],
+select,
+textarea {
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	font-family: var(--mc-font-body);
+	color: var(--mc-color-text);
+	background-color: var(--mc-color-background);
+	border: 0.0625rem solid var(--mc-color-subtle);
+	border-radius: var(--mc-border-radius-sm);
+	width: 100%;
+	padding: 0.75rem 1rem;
+	transition: border-color var(--mc-transition);
+	outline: none;
+	box-sizing: border-box;
+	-webkit-appearance: none;
+	appearance: none;
+	box-shadow: none;
+}
+
+/* ── Focus ───────────────────────────────────────────────────────────────── */
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+	outline: none;
+	border-color: var(--mc-color-primary);
+	border-radius: var(--mc-border-radius-sm);
+	box-shadow: none;
+}
+
+/* ── Textarea ────────────────────────────────────────────────────────────── */
+
+textarea {
+	min-height: 8rem;
+	resize: vertical;
+	border-radius: var(--mc-border-radius-sm);
+}
+
+/* ── Select dropdown ─────────────────────────────────────────────────────── */
+
+select {
+	cursor: pointer;
+	background-image: url(../svgs/select-arrow.svg);
+	background-repeat: no-repeat;
+	background-position: right 0.9375rem center;
+	background-size: 0.75rem;
+	padding-right: 3rem;
+}
+
+/* ── Autofill ────────────────────────────────────────────────────────────── */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 30px var(--mc-color-background) inset !important;
+	box-shadow:         0 0 0 30px var(--mc-color-background) inset !important;
+	-webkit-text-fill-color: var(--mc-color-text) !important;
+}
+
+/* ── Checkbox ────────────────────────────────────────────────────────────── */
+
+input[type="checkbox"] {
+	-webkit-appearance: auto;
+	appearance: auto;
+	accent-color: var(--mc-color-primary);
+	width: 1rem;
+	height: 1rem;
+	cursor: pointer;
+	margin: 0;
+	flex-shrink: 0;
+}
+
+/* ── Radio ───────────────────────────────────────────────────────────────── */
+
+input[type="radio"] {
+	-webkit-appearance: auto;
+	appearance: auto;
+	accent-color: var(--mc-color-primary);
+	width: 1rem;
+	height: 1rem;
+	cursor: pointer;
+	margin: 0;
+	flex-shrink: 0;
+}
+
+/* ── Checkbox / radio label wrapper ──────────────────────────────────────── */
+
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]),
+.checkbox-label,
+.radio-label {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.625rem;
+	margin: 0;
+	cursor: pointer;
+	font-size: 0.9375rem;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--mc-color-text);
+}
+
+/* ── Label links ─────────────────────────────────────────────────────────── */
+
+label a {
+	color: var(--mc-color-primary);
+	text-decoration: underline;
+	transition: color var(--mc-transition);
+}
+
+label a:hover {
+	color: var(--mc-color-secondary);
+}
+
+/* ── Submit button ───────────────────────────────────────────────────────── */
+
+input[type="submit"],
+button[type="submit"],
+.submit-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mc-btn-padding-y) var(--mc-btn-padding-x);
+	font-size: var(--mc-btn-font-size);
+	font-weight: var(--mc-btn-font-weight);
+	font-family: var(--mc-font-body);
+	line-height: 1;
+	color: var(--mc-color-light);
+	background-color: var(--mc-color-primary);
+	border: 0.125rem solid var(--mc-color-primary);
+	border-radius: var(--mc-border-radius);
+	cursor: pointer;
+	transition: background-color var(--mc-transition), border-color var(--mc-transition);
+	-webkit-appearance: none;
+	appearance: none;
+	width: auto;
+	box-shadow: none;
+	text-decoration: none;
+}
+
+input[type="submit"]:hover,
+button[type="submit"]:hover,
+.submit-button:hover {
+	background-color: var(--mc-color-secondary);
+	border-color: var(--mc-color-secondary);
+	color: var(--mc-color-light);
+}
+
+input[type="submit"]:focus,
+button[type="submit"]:focus {
+	outline: 0.125rem solid var(--mc-color-primary);
+	outline-offset: 0.125rem;
+}
+
+/* ── Disabled fields ─────────────────────────────────────────────────────── */
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* ── Form layout helpers ─────────────────────────────────────────────────── */
+
+.field-row,
+.form-row-wrapper,
+.form-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.25rem;
+}
+
+.field-full,
+.form-row,
+.full-width {
+	width: 100%;
+}
+
+.field-half,
+.half-width {
+	width: calc(50% - 0.625rem);
+}
+
+.field-third,
+.third-width {
+	width: calc(33.333% - 0.834rem);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media only screen and (max-width: 767px) {
+	.field-half,
+	.field-third,
+	.half-width,
+	.third-width {
+		width: 100%;
+	}
+}

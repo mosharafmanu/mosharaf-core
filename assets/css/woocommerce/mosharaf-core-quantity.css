@@ -1,0 +1,66 @@
+/**
+ * Mosharaf Core — Quantity Stepper
+ *
+ * Replaces WooCommerce's native number-input spin arrows with custom
+ * −/+ buttons (injected by mosharaf-core-quantity.js) so the control
+ * reads as one cohesive, bordered group matching the theme's input
+ * language. Deliberately UNSCOPED to single-product — WooCommerce
+ * renders `.quantity` on cart, checkout, mini-cart, and shop-loop
+ * forms too, and this control should look and behave identically
+ * everywhere, regardless of how gallery/tabs/etc. are themed per project.
+ *
+ * @package mosharaf-core
+ */
+
+.quantity {
+	display: inline-flex;
+	align-items: stretch;
+	border: 0.0625rem solid var(--mc-color-subtle);
+	border-radius: var(--mc-border-radius-sm);
+	overflow: hidden;
+	transition: border-color var(--mc-transition);
+}
+
+.quantity:focus-within {
+	border-color: var(--mc-color-primary);
+}
+
+.quantity input[type="number"] {
+	width: 3rem;
+	border: 0;
+	border-radius: 0;
+	background-color: transparent;
+	text-align: center;
+	padding: 0.75rem 0;
+	-moz-appearance: textfield;
+}
+
+.quantity input[type="number"]::-webkit-inner-spin-button,
+.quantity input[type="number"]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.quantity .qty-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	border: 0;
+	background-color: var(--mc-color-subtle);
+	color: var(--mc-color-text);
+	font-size: 1.125rem;
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color var(--mc-transition), color var(--mc-transition);
+}
+
+.quantity .qty-btn:hover:not(:disabled) {
+	background-color: color-mix(in srgb, var(--mc-color-primary) 12%, transparent);
+	color: var(--mc-color-primary);
+}
+
+.quantity .qty-btn:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
