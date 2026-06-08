@@ -246,6 +246,94 @@
 			);
 		} );
 
+		// ─────────────────────────────────────────────────────────────
+		// STAGE-PADDING CAROUSEL — TOGGLE TRIGGER CLASSES (MOBILE)
+		// Elements opting in via .js-stage-padding get .stagePaddingRight
+		// + .itemMargin (the slick spacing helpers in
+		// mosharaf-core-slick-custom.css) below 768px, removed above —
+		// these are what the carousel init below activates against.
+		// ─────────────────────────────────────────────────────────────
+
+		function toggleStagePaddingClasses() {
+			const $elements = $( '.js-stage-padding' );
+			if ( $( window ).width() <= 767 ) {
+				$elements.addClass( 'stagePaddingRight itemMargin' );
+			} else {
+				$elements.removeClass( 'stagePaddingRight itemMargin' );
+			}
+		}
+
+		toggleStagePaddingClasses();
+
+		let stagePaddingTimer;
+		$( window ).on( 'resize', function () {
+			clearTimeout( stagePaddingTimer );
+			stagePaddingTimer = setTimeout( toggleStagePaddingClasses, 100 );
+		} );
+
+
+		// ─────────────────────────────────────────────────────────────
+		// STAGE-PADDING CAROUSEL — INIT (MOBILE ONLY)
+		// Turns any .js-stage-padding grid into a single-slide Slick
+		// carousel below 768px and un-slicks it back to a static grid
+		// above that breakpoint. Cards inside (.card / .icon-card /
+		// .product-card) are equal-heighted while the carousel runs.
+		// Add grid-specific exclusions to the .not() list for any grid
+		// that ships with its own carousel.
+		// ─────────────────────────────────────────────────────────────
+
+		function setEqualHeight() {
+			if ( window.innerWidth < 768 ) {
+				$( '.js-stage-padding' ).each( function () {
+					const $carousel = $( this );
+					const $cards    = $carousel.find( '.card, .icon-card, .product-card' );
+					let maxHeight   = 0;
+
+					$cards.css( 'height', '' );
+					$cards.each( function () {
+						maxHeight = Math.max( maxHeight, $( this ).outerHeight() );
+					} );
+					$cards.css( 'height', maxHeight + 'px' );
+				} );
+			} else {
+				$( '.js-stage-padding .card, .js-stage-padding .icon-card, .js-stage-padding .product-card' ).css( 'height', '' );
+			}
+		}
+
+		function initStagePaddingCarousel() {
+			const $carousel = $( '.js-stage-padding' ).not( '.latest-news-grid, .related-products-grid, .logo-showcase-grid, .card-grid-carousel' );
+
+			if ( ! $carousel.length ) return;
+
+			if ( window.innerWidth < 768 ) {
+				if ( ! $carousel.hasClass( 'slick-initialized' ) ) {
+					$carousel.slick( {
+						dots:           false,
+						arrows:         false,
+						infinite:       true,
+						speed:          300,
+						slidesToShow:   1,
+						slidesToScroll: 1,
+						adaptiveHeight: false,
+						onSetPosition:  setEqualHeight,
+					} );
+
+					setTimeout( setEqualHeight, 100 );
+				}
+			} else if ( $carousel.hasClass( 'slick-initialized' ) ) {
+				$carousel.slick( 'unslick' );
+				$( '.js-stage-padding .card, .js-stage-padding .icon-card, .js-stage-padding .product-card' ).css( 'height', '' );
+			}
+		}
+
+		setTimeout( initStagePaddingCarousel, 100 );
+
+		let carouselResizeTimer;
+		$( window ).on( 'resize', function () {
+			clearTimeout( carouselResizeTimer );
+			carouselResizeTimer = setTimeout( initStagePaddingCarousel, 250 );
+		} );
+
 	} ); // end document.ready
 
 } )( jQuery );
