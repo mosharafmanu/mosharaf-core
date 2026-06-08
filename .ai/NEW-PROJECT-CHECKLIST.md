@@ -6,8 +6,14 @@ Use this checklist every time you start a new WordPress project from this framew
 
 ## Phase A — File Setup
 
-- [ ] Copy `mosharaf-core/` theme folder to the new project's `wp-content/themes/`
+- [ ] Copy `mosharaf-core/` theme folder directly into the new project's `wp-content/themes/`
+      — ⚠ it must land flat as `wp-content/themes/<slug>/style.css`, not nested in a
+      wrapper folder (e.g. `wp-content/themes/my-project/mosharaf-core/`), or WordPress
+      won't recognise it as an activatable theme
 - [ ] Rename the folder to the project slug (e.g. `acme-corp`)
+- [ ] Remove the copied `.git/` (`rm -rf .git`) before running `git init` — `cp -r` carries
+      over the starter's `origin` remote, which would point commits/pushes at the original
+      `mosharafmanu/mosharaf-core` repo instead of your project's
 - [ ] Run `bash bin/new-project.sh` to rename all prefixes in one pass (see `NEW-PROJECT-SETUP.md`)
 - [ ] Update `style.css` header: Theme Name, Author URI, Description
 

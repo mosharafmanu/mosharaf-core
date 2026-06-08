@@ -17,7 +17,25 @@ cp -r /path/to/mosharaf-core /your/wp/wp-content/themes/travelnerds-theme
 
 > Do **not** run the script inside the `mosharaf-core` folder itself. Always work on a copy.
 
+> ⚠ **The copy must land directly inside `wp-content/themes/`** — WordPress only
+> recognises a theme when `style.css` sits at `wp-content/themes/<slug>/style.css`.
+> A copy like `wp-content/themes/my-project/mosharaf-core/style.css` (one level too
+> deep, e.g. from dragging the folder into a wrapper directory in Finder/an IDE)
+> won't show up as an activatable theme. If that happens, move the contents up:
+> ```bash
+> mv /your/wp/wp-content/themes/my-project/mosharaf-core /your/wp/wp-content/themes/travelnerds-theme
+> rmdir /your/wp/wp-content/themes/my-project   # remove the now-empty wrapper
+> ```
+
 ### Step 2 — (Recommended) Initialise git
+
+> ⚠ **`cp -r` copies `.git/` too** — and with it the starter's `origin` remote
+> (`mosharafmanu/mosharaf-core`). Committing or pushing from the copy without
+> removing it first would target the *original starter repo*, not your project.
+> Remove it before initialising fresh:
+> ```bash
+> rm -rf .git
+> ```
 
 ```bash
 cd /your/wp/wp-content/themes/travelnerds-theme
