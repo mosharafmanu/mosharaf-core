@@ -149,6 +149,7 @@ printf "  %-28s →  %s\n" "--mc-"              "--${CSS_PREFIX}-"
 printf "  %-28s →  %s\n" "bg-mc-  color-mc-"  "bg-${CSS_PREFIX}-  color-${CSS_PREFIX}-"
 printf "  %-28s →  %s\n" "'mc-N'  \"mc-N\""  "'${CSS_PREFIX}-N'  \"${CSS_PREFIX}-N\""
 printf "  %-28s →  %s\n" "Text Domain"        "$TEXT_DOMAIN"
+printf "  %-28s →  %s\n" "Asset file renames" "assets/css/mosharaf-core-*.css  assets/js/woocommerce/mosharaf-core-*.js"
 printf "  %-28s →  %s\n" "POT file rename"    "languages/${TEXT_DOMAIN}.pot"
 if [[ "$INCLUDE_WOOCOMMERCE" -eq 0 ]]; then
     printf "  %-28s →  %s\n" "WooCommerce module"  "REMOVED (inc/woocommerce/, woocommerce/, assets/{css,js}/woocommerce/, .ai/WOOCOMMERCE.md)"
@@ -264,6 +265,27 @@ n=$(replace_in_files "\"mc-" "\"${CSS_PREFIX}-" "${PHP_FILES[@]}")
 [[ $n -gt 0 ]] && ok "PHP image sizes \"mc-N\" → \"${CSS_PREFIX}-N\"  ($n files)" \
     || skipped "Double-quoted mc- image sizes: none found"
 CHANGED=$((CHANGED + n))
+
+# =============================================================
+#  RENAME ASSET FILES
+# =============================================================
+step "Renaming asset files"
+asset_renamed=0
+while IFS= read -r old_path; do
+    dir="$(dirname "$old_path")"
+    old_name="$(basename "$old_path")"
+    new_name="${old_name//mosharaf-core/$THEME_SLUG}"
+    if [[ "$old_name" != "$new_name" ]]; then
+        mv "$old_path" "$dir/$new_name"
+        ok "Renamed: ${old_path#"$THEME_DIR"/} → $new_name"
+        asset_renamed=$((asset_renamed + 1))
+        CHANGED=$((CHANGED + 1))
+    fi
+done < <(find "$THEME_DIR/assets" -type f \( -name "*.css" -o -name "*.js" \) | sort)
+
+if [[ $asset_renamed -eq 0 ]]; then
+    skipped "No asset files with 'mosharaf-core' in name (already renamed or none found)"
+fi
 
 # =============================================================
 #  STYLE.CSS HEADER — explicit field updates
