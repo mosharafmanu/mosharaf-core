@@ -16,7 +16,7 @@
 	}
 	?>
 
-	<div class="post-inner">
+	<div class="page-inner">
 
 		<?php if ( $show_title ) : ?>
 			<header class="entry-header">

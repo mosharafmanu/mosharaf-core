@@ -16,14 +16,19 @@
  * @package mosharaf-core
  */
 
+defined( 'ABSPATH' ) || exit;
+
+if ( ! class_exists( 'WooCommerce' ) ) {
+	return;
+}
+
 // Shop archive layout + filters — sidebar/toolbar/grid hooks for the shop and
 // category pages. A standalone, optional piece of this module: delete this
 // require plus inc/woocommerce/shop-archive.php, inc/woocommerce/templates/
 // shop-*.php, and the mosharaf-core-shop-archive CSS/JS pair to fall back to
 // WooCommerce's stock archive layout (still themed by mosharaf-core-woocommerce.css).
 // Loaded here (rather than functions.php) so it shares this file's removability —
-// guarded the same way, by file_exists(), since WooCommerce is already active by
-// the time this file is reached.
+// guarded the same way, by file_exists(), after WooCommerce is confirmed active.
 $mosharaf_shop_archive = get_template_directory() . '/inc/woocommerce/shop-archive.php';
 if ( file_exists( $mosharaf_shop_archive ) ) {
 	require $mosharaf_shop_archive;
@@ -48,9 +53,6 @@ add_action( 'after_setup_theme', function() {
 
 // Swap default content wrappers for our own layout classes and remove sidebar
 add_action( 'init', function() {
-	if ( ! class_exists( 'WooCommerce' ) ) {
-		return;
-	}
 	remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper',     10 );
 	remove_action( 'woocommerce_after_main_content',  'woocommerce_output_content_wrapper_end', 10 );
 	remove_action( 'woocommerce_sidebar',             'woocommerce_get_sidebar',                10 );
@@ -103,9 +105,6 @@ add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
 
 // Enqueue our WooCommerce CSS (only when WC is active, after main styles)
 add_action( 'wp_enqueue_scripts', function() {
-	if ( ! class_exists( 'WooCommerce' ) ) {
-		return;
-	}
 	wp_enqueue_style(
 		'mosharaf-core-woocommerce',
 		get_template_directory_uri() . '/assets/css/woocommerce/mosharaf-core-woocommerce.css',

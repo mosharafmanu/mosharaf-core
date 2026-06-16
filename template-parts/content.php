@@ -32,7 +32,7 @@
 		</div>
 	<?php endif; ?>
 
-	<div class="post-inner layout-padding">
+	<div class="<?php echo esc_attr( is_singular( 'post' ) ? 'post-inner layout-padding' : 'layout-padding' ); ?>">
 
 		<header class="entry-header pt-50 pt-md-70 pt-lg-100">
 

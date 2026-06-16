@@ -33,17 +33,6 @@
 	padding-bottom: 5rem;
 }
 
-/* Cart/checkout/account pages render through the generic page template
-   (content-page.php), which wraps everything in `.post-inner` — a
-   reading-width constraint (max-width: 50rem) meant for prose/blog
-   content. WC's 2-column layouts need the full container width, so lift
-   it wherever WC adds its `woocommerce-page` body class (cart, checkout,
-   my-account, shop — anywhere `.post-inner` could otherwise squeeze them
-   into a single narrow column). */
-.woocommerce-page .post-inner {
-	max-width: none;
-}
-
 /* Archive page title */
 .wc-archive-title {
 	margin-bottom: 0.5rem;
