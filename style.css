@@ -45,6 +45,7 @@ Design Tokens
 
 	/* Container */
     --mc-container-max: 94.5rem;       /* 1512px */
+    --mc-layout-padding: 1.5rem;       /* 24px — base gutter; bumped at 1200/1600 (see layout-padding) */
 
 
 	/* Buttons */

@@ -341,9 +341,15 @@ h6,.h6-style {
 	margin-right: auto;
 	width: 100%;
 }
+/* When the container also carries the gutter, widen its max-width by the gutter
+   so the *content* stays the full --mc-container-max instead of the padding
+   eating into it (box-sizing is border-box theme-wide). */
+.mc-container.layout-padding {
+	max-width: calc(var(--mc-container-max) + 2 * var(--mc-layout-padding));
+}
 .layout-padding {
-	padding-left: 1.5rem; /* 24px */
-	padding-right: 1.5rem; /* 24px */
+	padding-left: var(--mc-layout-padding); /* 24px base */
+	padding-right: var(--mc-layout-padding);
 }
 
 .layout-margin {
@@ -369,10 +375,9 @@ h6,.h6-style {
 }
 
 @media only screen and (min-width: 1200px) {
-	
-	.layout-padding {
-		padding-left: 2rem; /* 32px */
-		padding-right: 2rem; /* 32px */
+
+	:root {
+		--mc-layout-padding: 2rem; /* 32px — also drives .mc-container.layout-padding max-width */
 	}
 	.layout-margin {
 		margin-left: 2rem; /* 32px */
@@ -381,10 +386,9 @@ h6,.h6-style {
 }
 @media only screen and (min-width: 1600px) {
 
-	.layout-padding{
-        padding-left: 3.125rem; /* 50px */
-		padding-right: 3.125rem; /* 50px */
-    }
+	:root {
+		--mc-layout-padding: 3.125rem; /* 50px — also drives .mc-container.layout-padding max-width */
+	}
 	.layout-margin{
         margin-left: 3.125rem; /* 50px */
 		margin-right: 3.125rem; /* 50px */
