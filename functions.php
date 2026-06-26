@@ -4,7 +4,7 @@
  */
 
 if ( ! defined( 'MOSHARAF_CORE_VERSION' ) ) {
-	define( 'MOSHARAF_CORE_VERSION', '1.0.38' );
+	define( 'MOSHARAF_CORE_VERSION', '1.0.39' );
 }
 
 

@@ -199,10 +199,39 @@ button[type="submit"]:hover,
 	color: var(--mc-color-light);
 }
 
+/* Drop the focus/active ring on mouse click, but keep it for keyboard users.
+   :focus-visible only fires for keyboard/non-pointer focus, so clicking shows
+   no ring while Tab still shows an accessible one. */
 input[type="submit"]:focus,
-button[type="submit"]:focus {
+button[type="submit"]:focus,
+input[type="submit"]:active,
+button[type="submit"]:active {
+	outline: none;
+}
+input[type="submit"]:focus-visible,
+button[type="submit"]:focus-visible {
 	outline: 0.125rem solid var(--mc-color-primary);
 	outline-offset: 0.125rem;
+}
+
+/* ── CF7 submit button icon ──────────────────────────────────────────────── */
+/* The CF7 submit <input> is rewritten to a <button> in PHP
+   (inc/helper-functions/contact-form.php) so it can hold an icon. */
+.wpcf7-submit {
+	column-gap: 0.5rem;
+}
+.wpcf7-submit__icon {
+	display: inline-flex;
+	line-height: 0;
+}
+.wpcf7-submit__icon svg {
+	display: block;
+	width: 1rem;
+	height: 1rem;
+}
+/* Icon follows the button text colour (overrides the SVG's hardcoded stroke). */
+.wpcf7-submit__icon svg path {
+	stroke: currentColor;
 }
 
 /* ── Disabled fields ─────────────────────────────────────────────────────── */

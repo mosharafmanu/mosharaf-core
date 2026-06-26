@@ -56,6 +56,45 @@ video_cdn_poster      (Image)    — Poster/thumbnail. Return: Array.
 
 Use ACF conditional logic to show/hide the relevant fields based on `video_source`.
 
+### Playback / behaviour fields
+
+In addition to the source fields above, add the playback fields that drive the
+renderer's `$args`. Apply ACF conditional logic on `video_behavior` where noted:
+
+```
+video_behavior           (Select)     — 'autoplay' | 'hover' | 'onclick-popup'  (default 'autoplay')
+video_autoplay           (True/False) — show when behavior = autoplay
+video_autoplay_on_scroll (True/False) — show when behavior = autoplay
+video_controls           (True/False) — show when behavior = autoplay (not for YouTube)
+video_muted              (True/False)
+video_loop               (True/False)
+video_popup_autoplay     (True/False) — show when behavior = onclick-popup
+video_popup_controls     (True/False) — show when behavior = onclick-popup
+```
+
+### ACF field instructions — set this copy verbatim
+
+The `instructions` strings are part of the field design: they tell editors how
+each option behaves. Set them exactly as below when creating the video fields so
+the admin UI is identical across every project built on this core.
+
+| Field | Label | `instructions` |
+|---|---|---|
+| `video_self_host_file` | Video File | Upload MP4 or WebM video file. |
+| `video_behavior` | Behavior | How the video plays. Autoplay = muted looping background video that pauses when off-screen. Hover = plays while the mouse is over it, resets on leave. Onclick Popup = shows a play button and opens the video in a lightbox (sound allowed). |
+| `video_autoplay` | Autoplay | Start playing as soon as the section loads. Browsers force it to be muted. (Autoplay behavior only.) |
+| `video_autoplay_on_scroll` | Autoplay On Scroll | Only start when the video scrolls into view (50% visible) and pause when it leaves. (Autoplay behavior only.) |
+| `video_controls` | Controls | Show the custom play/pause and mute buttons overlaid on the video. (Autoplay behavior, not available for YouTube.) |
+| `video_muted` | Muted | Mute the audio. Note: Autoplay and Hover are always muted by the browser regardless of this setting. |
+| `video_loop` | Loop | Automatically restart the video from the beginning when it ends. |
+| `video_popup_autoplay` | Popup Autoplay | Start playing automatically when the popup opens. (Onclick Popup behavior only.) |
+| `video_popup_controls` | Popup Controls | Show the native video controls inside the popup. (Onclick Popup behavior only.) |
+
+> ⚠️ **Template note (controls leak):** `video_controls` defaults to true and can
+> leak into hover/popup behaviours, producing a native `<video controls>`. Pass
+> controls only for the autoplay behaviour:
+> `'controls' => 'autoplay' === $video_behavior && ! empty( $video['video_controls'] )`.
+
 ---
 
 ## Helper Usage
