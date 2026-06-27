@@ -12,7 +12,7 @@ get_header();
 			<?php mosharaf_breadcrumb( true ); ?>
 		<?php endif; ?>
 
-		<header class="archive-header layout-padding pt-50 pt-md-70 pt-lg-100">
+		<header class="archive-header mc-container layout-padding pt-50 pt-md-70 pt-lg-100">
 			<?php
 			if ( is_category() ) {
 				$archive_label = __( 'Category', 'mosharaf-core' );
@@ -44,7 +44,7 @@ get_header();
 			<?php the_archive_description( '<div class="archive-description">', '</div>' ); ?>
 		</header>
 
-		<section class="blog-grid-section layout-padding pt-40 pt-md-50 pb-50 pb-md-70 pb-lg-100">
+		<section class="blog-grid-section mc-container layout-padding pt-40 pt-md-50">
 			<?php if ( have_posts() ) : ?>
 
 				<div class="blog-grid card-grid columns-3">
@@ -57,7 +57,7 @@ get_header();
 
 						if ( function_exists( 'mosharaf_render_post_card' ) ) {
 							mosharaf_render_post_card( null, [
-								'variant'       => 1 === $post_card_index ? 'featured' : 'default',
+								'variant'       => 'default',
 								'fetchpriority' => 1 === $post_card_index ? 'high' : 'auto',
 							] );
 						} else {

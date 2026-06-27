@@ -17,7 +17,7 @@ get_header();
 		$result_count = (int) $wp_query->found_posts;
 		?>
 
-		<header class="search-results-header layout-padding pt-50 pt-md-70 pt-lg-100">
+		<header class="search-results-header mc-container layout-padding pt-50 pt-md-70 pt-lg-100">
 			<span class="archive-label"><?php esc_html_e( 'Search', 'mosharaf-core' ); ?></span>
 			<h1 class="archive-title">
 				<?php printf(
@@ -64,7 +64,7 @@ get_header();
 				ob_start();
 				if ( function_exists( 'mosharaf_render_post_card' ) ) {
 					mosharaf_render_post_card( null, [
-						'variant'       => 1 === $article_index ? 'featured' : 'default',
+						'variant'       => 'default',
 						'fetchpriority' => 1 === $article_index ? 'high' : 'auto',
 					] );
 				} else {
@@ -76,7 +76,7 @@ get_header();
 			?>
 
 			<?php if ( $products_html ) : ?>
-				<section class="search-results-group search-results-group--products layout-padding pt-40 pt-md-50">
+				<section class="search-results-group search-results-group--products mc-container layout-padding pt-40 pt-md-50">
 					<h2 class="search-results-group__title">
 						<?php esc_html_e( 'Products', 'mosharaf-core' ); ?>
 						<span class="search-results-group__count"><?php echo esc_html( number_format_i18n( $product_count ) ); ?></span>
@@ -88,7 +88,7 @@ get_header();
 			<?php endif; ?>
 
 			<?php if ( $articles_html ) : ?>
-				<section class="search-results-group search-results-group--articles layout-padding pt-40 pt-md-50 pb-50 pb-md-70 pb-lg-100">
+				<section class="search-results-group search-results-group--articles mc-container layout-padding pt-40 pt-md-50 pb-50 pb-md-70 pb-lg-100">
 					<h2 class="search-results-group__title">
 						<?php esc_html_e( 'Articles', 'mosharaf-core' ); ?>
 						<span class="search-results-group__count"><?php echo esc_html( number_format_i18n( $article_count ) ); ?></span>
@@ -107,7 +107,7 @@ get_header();
 
 		<?php else : ?>
 
-			<div class="search-no-results layout-padding pt-50 pb-50 pb-md-70 pb-lg-100">
+			<div class="search-no-results mc-container layout-padding pt-50 pb-50 pb-md-70 pb-lg-100">
 				<p class="search-no-results__text"><?php printf(
 					/* translators: %s: search query */
 					esc_html__( 'Sorry, nothing matched "%s". Try a different search term.', 'mosharaf-core' ),

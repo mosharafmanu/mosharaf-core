@@ -11,7 +11,7 @@ get_header();
 		<?php get_template_part( 'template-parts/blog', 'hero' ); ?>
 
 
-		<header class="blog-page-header layout-padding">
+		<header class="blog-page-header mc-container layout-padding">
 			<div>
 				<h1 class="blog-page-title"><?php
 					$blog_page_id = get_option( 'page_for_posts' );
@@ -34,11 +34,11 @@ get_header();
 			<?php endif; ?>
 		</header>
 
-		<div class="blog-search-bar layout-padding pt-30 pb-30">
+		<div class="blog-search-bar mc-container layout-padding pt-30 pb-30">
 			<?php get_search_form(); ?>
 		</div>
 
-		<section class="blog-grid-section layout-padding pt-20 pb-50 pb-md-70 pb-lg-100">
+		<section class="blog-grid-section mc-container layout-padding pt-20">
 			<?php if ( have_posts() ) : ?>
 
 				<div class="blog-grid card-grid columns-3">
@@ -51,7 +51,7 @@ get_header();
 
 						if ( function_exists( 'mosharaf_render_post_card' ) ) {
 							mosharaf_render_post_card( null, [
-								'variant'       => 1 === $post_card_index ? 'featured' : 'default',
+								'variant'       => 'default',
 								'fetchpriority' => 1 === $post_card_index ? 'high' : 'auto',
 							] );
 						} else {
