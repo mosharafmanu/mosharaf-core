@@ -220,6 +220,30 @@
 
 
 		// ─────────────────────────────────────────────────────────────
+		// READING PROGRESS (single post)
+		// Fills as the article scrolls through the viewport.
+		// ─────────────────────────────────────────────────────────────
+
+		const $progressBar = $( '.reading-progress__bar' );
+		const $article     = $( '.single-post' );
+
+		if ( $progressBar.length && $article.length ) {
+			const updateProgress = function () {
+				const articleTop = $article.offset().top;
+				const start      = articleTop;
+				const end        = articleTop + $article.outerHeight() - $( window ).height();
+				const scrolled   = $( window ).scrollTop();
+				const ratio      = end > start ? ( scrolled - start ) / ( end - start ) : 1;
+				const clamped    = Math.max( 0, Math.min( 1, ratio ) );
+				$progressBar.css( 'width', ( clamped * 100 ) + '%' );
+			};
+
+			$( window ).on( 'scroll.readingProgress resize.readingProgress', updateProgress );
+			updateProgress();
+		}
+
+
+		// ─────────────────────────────────────────────────────────────
 		// SMOOTH SCROLL TO ANCHOR
 		// Offset accounts for sticky header height.
 		// ─────────────────────────────────────────────────────────────
