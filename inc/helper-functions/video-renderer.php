@@ -19,6 +19,15 @@ if ( ! function_exists( 'mosharaf_render_video' ) ) {
 			'width'              => '100%',
 			'height'             => 'auto',
 			'echo'               => true,
+			// Perf knobs (opt-in; default keeps existing behavior):
+			// - preload: explicit <video preload> value ('none'|'metadata'|'auto').
+			// - defer:   render WITHOUT the autoplay attribute and preload="none"
+			//            so the file isn't fetched until JS calls .play() (e.g. for
+			//            a rotating hero's offscreen slides).
+			// - poster:  fallback poster URL when the video field has none of its own.
+			'preload'            => null,
+			'defer'              => false,
+			'poster'             => '',
 		];
 		$args = wp_parse_args( $args, $defaults );
 
@@ -56,6 +65,22 @@ if ( ! function_exists( 'mosharaf_render_video' ) ) {
 
 		if ( empty( $video_html ) ) {
 			return '';
+		}
+
+		// Load only the video CSS + JS this render needs. They are registered (not
+		// enqueued) globally — see mosharaf_scripts() — so pages without any video
+		// ship none of them. Styles enqueued mid-render print in the footer; the
+		// video-* rules are self-contained, so source order is immaterial.
+		wp_enqueue_style( 'mosharaf-core-video' );
+		wp_enqueue_script( 'mosharaf-core-video-behaviors' );
+
+		if ( 'onclick-popup' === $args['behavior'] ) {
+			wp_enqueue_style( 'mosharaf-core-video-popup' );
+			wp_enqueue_script( 'mosharaf-core-video-popup' );
+		}
+
+		if ( 'vimeo' === $video_source ) {
+			wp_enqueue_script( 'jquery-vimeo-player' );
 		}
 
 		$container_class = 'video-container';
@@ -114,7 +139,15 @@ if ( ! function_exists( 'mosharaf_render_self_hosted_video' ) ) {
 		$video_url  = esc_url( $video_file['url'] );
 		$poster_url = '';
 		if ( $poster && isset( $poster['url'] ) ) {
-			$poster_url = esc_url( $poster['url'] );
+			// A 1600px-wide poster is ample for a full-bleed video — avoid shipping
+			// the multi-hundred-KB original (it sits on the hero's LCP path).
+			$poster_url = esc_url( $poster['sizes']['mc-1600'] ?? $poster['url'] );
+		}
+
+		// Caller-supplied fallback poster (e.g. a hero's base image) so a deferred /
+		// offscreen slide shows a still instead of black before its video loads.
+		if ( empty( $poster_url ) && ! empty( $args['poster'] ) ) {
+			$poster_url = esc_url( $args['poster'] );
 		}
 
 		if ( empty( $poster_url ) && $args['autoplay_on_scroll'] ) {
@@ -122,7 +155,7 @@ if ( ! function_exists( 'mosharaf_render_self_hosted_video' ) ) {
 			if ( $product && method_exists( $product, 'get_image_id' ) ) {
 				$image_id = $product->get_image_id();
 				if ( $image_id ) {
-					$poster_url = wp_get_attachment_image_url( $image_id, 'full' );
+					$poster_url = wp_get_attachment_image_url( $image_id, 'mc-1600' );
 				}
 			}
 		}
@@ -133,7 +166,9 @@ if ( ! function_exists( 'mosharaf_render_self_hosted_video' ) ) {
 		if ( 'autoplay' === $args['behavior'] ) {
 			// Always add autoplay attribute for 'autoplay' behavior to load first frame/poster.
 			// JavaScript will pause immediately if autoplay parameter is false.
-			$autoplay = true;
+			// EXCEPT when deferred: the caller starts these with JS, so no autoplay
+			// (which would otherwise force an eager download of an offscreen video).
+			$autoplay = ! $args['defer'];
 
 			if ( $args['autoplay_on_scroll'] || $args['autoplay'] ) {
 				$muted = true; // Browsers require muted for autoplay
@@ -145,6 +180,17 @@ if ( ! function_exists( 'mosharaf_render_self_hosted_video' ) ) {
 			$autoplay = false;
 			if ( $args['autoplay'] ) {
 				$muted = true; // Browsers require muted for autoplay
+			}
+		}
+
+		// Resolve the preload hint: explicit arg wins; a deferred video must not
+		// fetch until played; autoplay-on-scroll only needs metadata up front.
+		$preload = $args['preload'];
+		if ( null === $preload ) {
+			if ( $args['defer'] ) {
+				$preload = 'none';
+			} elseif ( $args['autoplay_on_scroll'] ) {
+				$preload = 'metadata';
 			}
 		}
 
@@ -166,8 +212,8 @@ if ( ! function_exists( 'mosharaf_render_self_hosted_video' ) ) {
 		if ( $args['loop'] ) {
 			$html .= 'loop ';
 		}
-		if ( $args['autoplay_on_scroll'] ) {
-			$html .= 'preload="metadata" ';
+		if ( $preload ) {
+			$html .= 'preload="' . esc_attr( $preload ) . '" ';
 		}
 		$html .= 'playsinline '; // Required for inline playback on iOS
 		$html .= 'data-behavior="' . esc_attr( $args['behavior'] ) . '" ';
@@ -190,6 +236,17 @@ if ( ! function_exists( 'mosharaf_render_self_hosted_video' ) ) {
 			$html .= 'class="' . esc_attr( $args['class'] ) . '" ';
 		}
 		$html .= '>';
+		// Offer a sibling .webm (smaller, VP9) ahead of the .mp4 when one has been
+		// generated next to it — supporting browsers take the WebM, the rest fall
+		// back to the universal MP4. Convention-based: no field/DB, just a file.
+		$webm_url = preg_replace( '/\.mp4$/i', '.webm', $video_url );
+		if ( $webm_url && $webm_url !== $video_url ) {
+			$uploads   = wp_get_upload_dir();
+			$webm_path = str_replace( $uploads['baseurl'], $uploads['basedir'], $webm_url );
+			if ( file_exists( $webm_path ) ) {
+				$html .= '<source src="' . esc_url( $webm_url ) . '" type="video/webm">';
+			}
+		}
 		$html .= '<source src="' . $video_url . '" type="' . esc_attr( $video_file['mime_type'] ) . '">';
 		$html .= esc_html__( 'Your browser does not support the video tag.', 'mosharaf-core' );
 		$html .= '</video>';
@@ -282,7 +339,7 @@ if ( ! function_exists( 'mosharaf_render_vimeo_video' ) ) {
 			if ( $product && method_exists( $product, 'get_image_id' ) ) {
 				$image_id = $product->get_image_id();
 				if ( $image_id ) {
-					$poster_url = wp_get_attachment_image_url( $image_id, 'full' );
+					$poster_url = wp_get_attachment_image_url( $image_id, 'mc-1600' );
 				}
 			}
 		}
@@ -293,7 +350,9 @@ if ( ! function_exists( 'mosharaf_render_vimeo_video' ) ) {
 		if ( 'autoplay' === $args['behavior'] ) {
 			// Always add autoplay attribute for 'autoplay' behavior to load first frame/poster.
 			// JavaScript will pause immediately if autoplay parameter is false.
-			$autoplay = true;
+			// EXCEPT when deferred: the caller starts these with JS, so no autoplay
+			// (which would otherwise force an eager download of an offscreen video).
+			$autoplay = ! $args['defer'];
 
 			if ( $args['autoplay_on_scroll'] || $args['autoplay'] ) {
 				$muted = true; // Browsers require muted for autoplay
@@ -305,6 +364,17 @@ if ( ! function_exists( 'mosharaf_render_vimeo_video' ) ) {
 			$autoplay = false;
 			if ( $args['autoplay'] ) {
 				$muted = true; // Browsers require muted for autoplay
+			}
+		}
+
+		// Resolve the preload hint: explicit arg wins; a deferred video must not
+		// fetch until played; autoplay-on-scroll only needs metadata up front.
+		$preload = $args['preload'];
+		if ( null === $preload ) {
+			if ( $args['defer'] ) {
+				$preload = 'none';
+			} elseif ( $args['autoplay_on_scroll'] ) {
+				$preload = 'metadata';
 			}
 		}
 
@@ -326,8 +396,8 @@ if ( ! function_exists( 'mosharaf_render_vimeo_video' ) ) {
 		if ( $args['loop'] ) {
 			$html .= 'loop ';
 		}
-		if ( $args['autoplay_on_scroll'] ) {
-			$html .= 'preload="metadata" ';
+		if ( $preload ) {
+			$html .= 'preload="' . esc_attr( $preload ) . '" ';
 		}
 		$html .= 'playsinline '; // Required for inline playback on iOS
 		$html .= 'data-behavior="' . esc_attr( $args['behavior'] ) . '" ';
@@ -377,7 +447,7 @@ if ( ! function_exists( 'mosharaf_render_cdn_video' ) ) {
 			if ( $product && method_exists( $product, 'get_image_id' ) ) {
 				$image_id = $product->get_image_id();
 				if ( $image_id ) {
-					$poster_url = wp_get_attachment_image_url( $image_id, 'full' );
+					$poster_url = wp_get_attachment_image_url( $image_id, 'mc-1600' );
 				}
 			}
 		}
@@ -388,7 +458,9 @@ if ( ! function_exists( 'mosharaf_render_cdn_video' ) ) {
 		if ( 'autoplay' === $args['behavior'] ) {
 			// Always add autoplay attribute for 'autoplay' behavior to load first frame/poster.
 			// JavaScript will pause immediately if autoplay parameter is false.
-			$autoplay = true;
+			// EXCEPT when deferred: the caller starts these with JS, so no autoplay
+			// (which would otherwise force an eager download of an offscreen video).
+			$autoplay = ! $args['defer'];
 
 			if ( $args['autoplay_on_scroll'] || $args['autoplay'] ) {
 				$muted = true; // Browsers require muted for autoplay
@@ -400,6 +472,17 @@ if ( ! function_exists( 'mosharaf_render_cdn_video' ) ) {
 			$autoplay = false;
 			if ( $args['autoplay'] ) {
 				$muted = true; // Browsers require muted for autoplay
+			}
+		}
+
+		// Resolve the preload hint: explicit arg wins; a deferred video must not
+		// fetch until played; autoplay-on-scroll only needs metadata up front.
+		$preload = $args['preload'];
+		if ( null === $preload ) {
+			if ( $args['defer'] ) {
+				$preload = 'none';
+			} elseif ( $args['autoplay_on_scroll'] ) {
+				$preload = 'metadata';
 			}
 		}
 
@@ -421,8 +504,8 @@ if ( ! function_exists( 'mosharaf_render_cdn_video' ) ) {
 		if ( $args['loop'] ) {
 			$html .= 'loop ';
 		}
-		if ( $args['autoplay_on_scroll'] ) {
-			$html .= 'preload="metadata" ';
+		if ( $preload ) {
+			$html .= 'preload="' . esc_attr( $preload ) . '" ';
 		}
 		$html .= 'playsinline '; // Required for inline playback on iOS
 		$html .= 'data-behavior="' . esc_attr( $args['behavior'] ) . '" ';
@@ -452,3 +535,23 @@ if ( ! function_exists( 'mosharaf_render_cdn_video' ) ) {
 		return $html;
 	}
 }
+
+/**
+ * Surface the video upload spec on every self-hosted video field.
+ *
+ * WordPress does not compress video on upload — whatever file is chosen is
+ * served full-size. Targeting by field name covers all self_host video fields
+ * across every layout (and any added later) in one place.
+ */
+add_filter(
+	'acf/load_field/name=video_self_host_file',
+	function ( $field ) {
+		$spec = __( 'Upload a web-optimised MP4: 1080p max, under ~3&nbsp;MB, H.264, no audio track. Export a compressed / "for web" version — not the original 4K or camera file. Large videos noticeably slow the page (the file is served at full size; WordPress does not compress it).', 'mosharaf-core' );
+
+		$field['instructions'] = $field['instructions']
+			? $field['instructions'] . '<br>' . $spec
+			: $spec;
+
+		return $field;
+	}
+);

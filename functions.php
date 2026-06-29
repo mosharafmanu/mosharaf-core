@@ -4,7 +4,7 @@
  */
 
 if ( ! defined( 'MOSHARAF_CORE_VERSION' ) ) {
-	define( 'MOSHARAF_CORE_VERSION', '1.0.41' );
+	define( 'MOSHARAF_CORE_VERSION', '1.0.42' );
 }
 
 
@@ -110,8 +110,10 @@ function mosharaf_scripts() {
 	// ── Core CSS ─────────────────────────────────────────────────
 	wp_enqueue_style( 'mosharaf-core-spacer',         get_template_directory_uri() . '/assets/css/spacer.css',                        array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-utilities',      get_template_directory_uri() . '/assets/css/utilities.css',                     array(), MOSHARAF_CORE_VERSION );
-	wp_enqueue_style( 'mosharaf-core-video',          get_template_directory_uri() . '/assets/css/video-behaviors.css',               array(), MOSHARAF_CORE_VERSION );
-	wp_enqueue_style( 'mosharaf-core-video-popup',    get_template_directory_uri() . '/assets/css/video-popup.css',                   array(), MOSHARAF_CORE_VERSION );
+	// Video CSS is registered, not enqueued — mosharaf_render_video() pulls it in at
+	// render time (like the video JS below), so pages without a video ship neither.
+	wp_register_style( 'mosharaf-core-video',         get_template_directory_uri() . '/assets/css/video-behaviors.css',               array(), MOSHARAF_CORE_VERSION );
+	wp_register_style( 'mosharaf-core-video-popup',   get_template_directory_uri() . '/assets/css/video-popup.css',                   array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'slick-carousel',               get_template_directory_uri() . '/assets/css/slick.css',                         array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-slick-custom',   get_template_directory_uri() . '/assets/css/mosharaf-core-slick-custom.css',    array( 'slick-carousel' ), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-design-style',   get_template_directory_uri() . '/assets/css/mosharaf-core-design-style.css',    array(), MOSHARAF_CORE_VERSION );
@@ -120,11 +122,15 @@ function mosharaf_scripts() {
 	wp_enqueue_style( 'mosharaf-core-style',          get_stylesheet_uri(),                                                           array(), MOSHARAF_CORE_VERSION );
 
 	// ── Core JS ──────────────────────────────────────────────────
-	wp_enqueue_script( 'jquery-vimeo-player',         get_template_directory_uri() . '/assets/js/jquery.mb.vimeo_player.min.js', array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
 	wp_enqueue_script( 'slick-carousel',              get_template_directory_uri() . '/assets/js/slick.js',                       array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
-	wp_enqueue_script( 'mosharaf-core-video-behaviors', get_template_directory_uri() . '/assets/js/video-behaviors.js',           array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
-	wp_enqueue_script( 'mosharaf-core-video-popup',     get_template_directory_uri() . '/assets/js/video-popup.js',               array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
 	wp_enqueue_script( 'mosharaf-core-scripts',         get_template_directory_uri() . '/assets/js/scripts.js',                   array( 'jquery', 'slick-carousel' ), MOSHARAF_CORE_VERSION, true );
+
+	// Video JS is registered, not enqueued — mosharaf_render_video() pulls in only
+	// what a rendered video needs (behaviors always; popup for onclick-popup; the
+	// Vimeo player only for a vimeo source), so video-free pages ship none.
+	wp_register_script( 'jquery-vimeo-player',         get_template_directory_uri() . '/assets/js/jquery.mb.vimeo_player.min.js', array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
+	wp_register_script( 'mosharaf-core-video-behaviors', get_template_directory_uri() . '/assets/js/video-behaviors.js',           array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
+	wp_register_script( 'mosharaf-core-video-popup',     get_template_directory_uri() . '/assets/js/video-popup.js',               array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
 }
 add_action( 'wp_enqueue_scripts', 'mosharaf_scripts' );
 
