@@ -39,7 +39,9 @@ Create these sub-fields inside any ACF layout that needs video:
 video_source          (Select)   — 'self_host' | 'youtube' | 'vimeo' | 'cdn'
 
 // Self-hosted (show when source = self_host)
-video_self_host_file  (File)     — WordPress media. Return: Array.
+video_self_host_file  (File)     — WordPress media. Return: Array. (Carries an
+                                   upload-spec instruction: 1080p / <3MB / H.264 / no audio.
+                                   Posters served at mc-1600.)
 video_self_host_poster (Image)   — Poster/thumbnail. Return: Array.
 
 // YouTube (show when source = youtube)
@@ -139,8 +141,51 @@ mosharaf_render_video( $video_field, $args = [] )
 | `width` | string | `'100%'` | Video element width |
 | `height` | string | `'auto'` | Video element height |
 | `echo` | bool | `true` | Echo or return the output |
+| `preload` | string\|null | `null` | Explicit `<video preload>` value (`'none'` \| `'metadata'` \| `'auto'`). When `null`, resolved automatically (see below). Self-hosted only. |
+| `defer` | bool | `false` | Render **without** the `autoplay` attribute and with `preload="none"`, so the file is **not fetched until JS calls `.play()`** (e.g. offscreen slides started later by a rotator/observer). Self-hosted only. |
+| `poster` | string | `''` | Fallback poster URL used only when the video field has no poster of its own. Self-hosted only. |
 
 `playsinline` is always added to all video elements automatically.
+
+**`preload` resolution** (self-hosted) when `preload` is left `null`: `defer` → `none`; else `autoplay_on_scroll` → `metadata`; else the attribute is omitted (browser default).
+
+---
+
+## Performance & Asset Loading
+
+The video CSS and JS are **not** loaded globally. In `functions.php` they are
+`wp_register_*`'d (not enqueued), and `mosharaf_render_video()` enqueues them
+**at render time** — so any page that renders no `<video>` ships none of them:
+
+- `video-behaviors.css` + `video-behaviors.js` — whenever any video renders
+- `video-popup.css` + `video-popup.js` — only for `behavior = 'onclick-popup'`
+- `jquery-vimeo-player` — only for `video_source = 'vimeo'`
+
+Because this keys off an **actual rendered `<video>`**, a section whose
+`media_type` is `image` (or whose video field is empty) ships no video assets.
+
+### WebM multi-source (convention-based)
+
+When a sibling `.webm` sits next to a self-hosted `.mp4` in uploads (same name),
+the renderer emits it as a **first `<source type="video/webm">`** ahead of the
+MP4 — no ACF field/DB, purely the file's presence. A video with no `.webm`
+sibling just serves the MP4. WebM files are **not auto-generated**: make them
+with ffmpeg (`-c:v libvpx-vp9 -crf 34 -b:v 0 -an`), keep only if smaller than the
+MP4, and deploy them with the media (they live in `uploads`, outside the repo).
+
+### Posters & deferral
+
+Self-hosted posters are served at the **`mc-1600`** size, not the full original
+(LCP path). For multiple autoplay videos on one screen, give all but the first
+`defer => true` so only the visible one is fetched/decoded until JS plays the
+others.
+
+### Upload spec (admin guardrail)
+
+WordPress does **not** compress video on upload. The `video_self_host_file`
+field carries instruction text (via `acf/load_field` at the end of
+`inc/helper-functions/video-renderer.php`) telling editors to upload a
+web-optimised MP4 (**1080p max, <~3 MB, H.264, no audio**).
 
 ---
 
@@ -213,10 +258,13 @@ mosharaf_render_video( $video_data, [
 ```html
 <div class="video-container {container_class}" data-behavior="{behavior}">
 
-    <!-- For self_host / vimeo / cdn: -->
-    <video width="100%" height="auto" poster="..." muted playsinline autoplay loop
+    <!-- For self_host / vimeo / cdn (poster served at mc-1600 size).
+         A deferred slide omits `autoplay` and adds `preload="none"`.
+         The webm <source> appears only when a sibling .webm file exists. -->
+    <video width="100%" height="auto" poster="...-1600x___.jpg" muted playsinline autoplay loop
            data-behavior="autoplay" data-desired-muted="false">
-        <source src="..." type="video/mp4">
+        <source src="...clip.webm" type="video/webm">
+        <source src="...clip.mp4" type="video/mp4">
     </video>
 
     <!-- For youtube: -->
