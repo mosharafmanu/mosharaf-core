@@ -96,7 +96,7 @@ mosharaf-core/
 1. `functions.php` runs:
    - Theme support features (thumbnails, html5, custom logo, etc.)
    - Nav menu registration (mainMenu, footerMenu)
-   - Asset enqueue (fonts, CSS, video JS)
+   - Asset enqueue (fonts, CSS, video JS) — Slick + CF7 load conditionally, jQuery to footer (see Performance below)
    - Gutenberg disable
    - ACF JSON sync configuration
 2. `inc/image-sizes.php` registers project image sizes
@@ -123,6 +123,34 @@ Frontend output
 ```
 
 See `ACF-PATTERNS.md` for the full workflow.
+
+---
+
+## Performance — Conditional Assets
+
+Front-end JS/CSS is loaded only where it's actually used, so a typical page ships
+the minimum. All toggles live in `functions.php` (`mosharaf_scripts()` + helpers)
+and `inc/helper-functions/flexible-content.php`.
+
+| Asset | Default | How it loads |
+|-------|---------|--------------|
+| **Slick** (`slick.css`, `mosharaf-core-slick-custom.css`, `slick.js`) | **Off** | Registered, not enqueued. Enqueued only when `mosharaf_page_needs_slick()` is true — a filterable function defaulting to `false` (base core renders no carousels). `scripts.js`'s carousel init self-guards (`if ( typeof $.fn.slick !== 'function' ) return;`) and does **not** depend on the slick handle. |
+| **Contact Form 7** (CF7's own CSS/JS) | Site-wide → **gated** | `mosharaf_cf7_conditional_assets()` filters `wpcf7_load_js` / `wpcf7_load_css` off unless `mosharaf_page_needs_contact_form()` is true — detects a `[contact-form-7]` shortcode on the queried object (filterable). |
+| **jQuery** | head → **footer** | `mosharaf_jquery_to_footer()` moves `jquery` / `jquery-core` / `jquery-migrate` to the footer group so they stop blocking first paint. (WooCommerce / Elementor enqueue head scripts that depend on jQuery, so on those sites it stays in the head — expected.) |
+| **Video** (behaviors / popup / Vimeo JS, video CSS) | **Off** | Registered, not enqueued; `mosharaf_render_video()` pulls in only what a rendered video needs. See `VIDEO-SYSTEM.md`. |
+
+**Opting Slick in (per child theme / project):**
+
+```php
+// Enable on pages whose flexible content uses a carousel layout:
+add_filter( 'mosharaf_page_needs_slick', function () {
+    return mosharaf_queried_cms_has_layout( [ 'my_carousel_section', 'logo_showcase' ] );
+} );
+```
+
+`mosharaf_queried_cms_has_layout( $layouts )` scans the queried page's `cms`
+rows — a real check, not a guess — and is the building block for scoping any
+per-feature asset to the pages that use it.
 
 ---
 
