@@ -325,6 +325,10 @@
 		}
 
 		function initStagePaddingCarousel() {
+			// Slick is loaded conditionally (see mosharaf_page_needs_slick) — bail
+			// quietly if it isn't present so stray carousel markup can't throw.
+			if ( typeof $.fn.slick !== 'function' ) return;
+
 			const $carousel = $( '.js-stage-padding' ).not( '.latest-news-grid, .related-products-grid, .logo-showcase-grid, .card-grid-carousel' );
 
 			if ( ! $carousel.length ) return;

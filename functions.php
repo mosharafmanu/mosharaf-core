@@ -4,7 +4,7 @@
  */
 
 if ( ! defined( 'MOSHARAF_CORE_VERSION' ) ) {
-	define( 'MOSHARAF_CORE_VERSION', '1.0.42' );
+	define( 'MOSHARAF_CORE_VERSION', '1.0.43' );
 }
 
 
@@ -98,6 +98,12 @@ add_action( 'widgets_init', 'mosharaf_widgets_init' );
 // ─────────────────────────────────────────────────────────────────
 
 function mosharaf_scripts() {
+	// Slick (carousel) ships its CSS + JS only on pages that actually render a
+	// carousel — see mosharaf_page_needs_slick(). Base core renders none, so it
+	// is off by default; the assets stay registered so a child theme / filter /
+	// render-time enqueue can opt in. scripts.js self-guards when Slick is absent.
+	$needs_slick = function_exists( 'mosharaf_page_needs_slick' ) && mosharaf_page_needs_slick();
+
 	// ── Fonts ────────────────────────────────────────────────────
 	wp_enqueue_style(
 		'mosharaf-core-fonts',
@@ -114,16 +120,27 @@ function mosharaf_scripts() {
 	// render time (like the video JS below), so pages without a video ship neither.
 	wp_register_style( 'mosharaf-core-video',         get_template_directory_uri() . '/assets/css/video-behaviors.css',               array(), MOSHARAF_CORE_VERSION );
 	wp_register_style( 'mosharaf-core-video-popup',   get_template_directory_uri() . '/assets/css/video-popup.css',                   array(), MOSHARAF_CORE_VERSION );
-	wp_enqueue_style( 'slick-carousel',               get_template_directory_uri() . '/assets/css/slick.css',                         array(), MOSHARAF_CORE_VERSION );
-	wp_enqueue_style( 'mosharaf-core-slick-custom',   get_template_directory_uri() . '/assets/css/mosharaf-core-slick-custom.css',    array( 'slick-carousel' ), MOSHARAF_CORE_VERSION );
+	// Registered always so they can be opted in; enqueued only where needed.
+	wp_register_style( 'slick-carousel',              get_template_directory_uri() . '/assets/css/slick.css',                         array(), MOSHARAF_CORE_VERSION );
+	wp_register_style( 'mosharaf-core-slick-custom',  get_template_directory_uri() . '/assets/css/mosharaf-core-slick-custom.css',    array( 'slick-carousel' ), MOSHARAF_CORE_VERSION );
+	if ( $needs_slick ) {
+		wp_enqueue_style( 'slick-carousel' );
+		wp_enqueue_style( 'mosharaf-core-slick-custom' );
+	}
 	wp_enqueue_style( 'mosharaf-core-design-style',   get_template_directory_uri() . '/assets/css/mosharaf-core-design-style.css',    array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-form-style',    get_template_directory_uri() . '/assets/css/mosharaf-core-form.css',             array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-starter-style',  get_template_directory_uri() . '/assets/css/mosharaf-core-starter-style.css',   array(), MOSHARAF_CORE_VERSION );
 	wp_enqueue_style( 'mosharaf-core-style',          get_stylesheet_uri(),                                                           array(), MOSHARAF_CORE_VERSION );
 
 	// ── Core JS ──────────────────────────────────────────────────
-	wp_enqueue_script( 'slick-carousel',              get_template_directory_uri() . '/assets/js/slick.js',                       array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
-	wp_enqueue_script( 'mosharaf-core-scripts',         get_template_directory_uri() . '/assets/js/scripts.js',                   array( 'jquery', 'slick-carousel' ), MOSHARAF_CORE_VERSION, true );
+	// Slick JS: registered always, enqueued only where a carousel renders.
+	// scripts.js no longer hard-depends on it (its carousel init self-guards when
+	// $.fn.slick is absent), so scripts.js loads everywhere while Slick is gated.
+	wp_register_script( 'slick-carousel',             get_template_directory_uri() . '/assets/js/slick.js',                       array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
+	if ( $needs_slick ) {
+		wp_enqueue_script( 'slick-carousel' );
+	}
+	wp_enqueue_script( 'mosharaf-core-scripts',         get_template_directory_uri() . '/assets/js/scripts.js',                   array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
 
 	// Video JS is registered, not enqueued — mosharaf_render_video() pulls in only
 	// what a rendered video needs (behaviors always; popup for onclick-popup; the
@@ -133,6 +150,45 @@ function mosharaf_scripts() {
 	wp_register_script( 'mosharaf-core-video-popup',     get_template_directory_uri() . '/assets/js/video-popup.js',               array( 'jquery' ), MOSHARAF_CORE_VERSION, true );
 }
 add_action( 'wp_enqueue_scripts', 'mosharaf_scripts' );
+
+
+// ─────────────────────────────────────────────────────────────────
+// Move jQuery to the footer so it stops blocking the first paint.
+// WordPress loads jQuery render-blocking in <head> by default; every
+// jQuery-dependent script here (scripts.js, slick, CF7) already loads in the
+// footer, so dependency order is preserved. Skips admin.
+// ─────────────────────────────────────────────────────────────────
+
+function mosharaf_jquery_to_footer() {
+	if ( is_admin() ) {
+		return;
+	}
+
+	$scripts = wp_scripts();
+	foreach ( array( 'jquery', 'jquery-core', 'jquery-migrate' ) as $handle ) {
+		if ( isset( $scripts->registered[ $handle ] ) ) {
+			$scripts->add_data( $handle, 'group', 1 );
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'mosharaf_jquery_to_footer', 100 );
+
+
+// ─────────────────────────────────────────────────────────────────
+// CONTACT FORM 7 — load its CSS/JS only where a form renders.
+// CF7 enqueues site-wide by default; mosharaf_page_needs_contact_form()
+// detects the [contact-form-7] shortcode on the queried object (and is
+// filterable), so every other page ships none of CF7's CSS/JS.
+// ─────────────────────────────────────────────────────────────────
+
+function mosharaf_cf7_conditional_assets( $load ) {
+	if ( ! function_exists( 'mosharaf_page_needs_contact_form' ) ) {
+		return $load;
+	}
+	return mosharaf_page_needs_contact_form() ? $load : false;
+}
+add_filter( 'wpcf7_load_js',  'mosharaf_cf7_conditional_assets' );
+add_filter( 'wpcf7_load_css', 'mosharaf_cf7_conditional_assets' );
 
 
 // ─────────────────────────────────────────────────────────────────
