@@ -15,6 +15,7 @@ if ( ! function_exists( 'mosharaf_render_responsive_picture' ) ) {
 			'size_group'         => null,
 			'mobile_size_group'  => null,
 			'mobile_media_query' => '(max-width: 767px)',
+			'mobile_image'       => null, // ACF image array — a different (art-directed) image for the mobile <source>
 		];
 		$args = wp_parse_args( $args, $defaults );
 
@@ -37,9 +38,13 @@ if ( ! function_exists( 'mosharaf_render_responsive_picture' ) ) {
 		$sizes   = esc_attr( $args['sizes'] );
 
 		if ( ! empty( $args['size_group'] ) ) {
+			// size_group → registered size used as the img src (define per project, see inc/image-sizes.php)
+			// e.g. 'hero' => 'mc-1600', 'card' => 'mc-600'
 			$token_map = [
 
 			];
+			// token → sizes that make up its srcset ladder (the original file is always added)
+			// e.g. 'mc-1600' => [ 'mc-600', 'mc-900', 'mc-1200', 'mc-1600' ]
 			$variant_map = [
 
 			];
@@ -86,23 +91,27 @@ if ( ! function_exists( 'mosharaf_render_responsive_picture' ) ) {
 
 				$mobile_source = '';
 				if ( ! empty( $args['mobile_size_group'] ) && isset( $token_map[ $args['mobile_size_group'] ] ) ) {
+					$mobile_image_data = ( is_array( $args['mobile_image'] ) && isset( $args['mobile_image']['ID'], $args['mobile_image']['url'] ) ) ? $args['mobile_image'] : $image_data;
+					$mobile_file_id    = intval( $mobile_image_data['ID'] );
+					$mobile_meta       = $mobile_file_id === $file_id ? $image_meta : wp_get_attachment_metadata( $mobile_file_id );
+
 					$mobile_token  = $token_map[ $args['mobile_size_group'] ];
-					$mobile_src       = wp_get_attachment_image_src( $file_id, $mobile_token );
+					$mobile_src       = wp_get_attachment_image_src( $mobile_file_id, $mobile_token );
 					$mobile_srcset    = '';
 					$mobile_srcset_array = [];
 
 					if ( $mobile_src ) {
 						if ( isset( $variant_map[ $mobile_token ] ) ) {
 							foreach ( $variant_map[ $mobile_token ] as $mobile_variant ) {
-								$mobile_variant_src = wp_get_attachment_image_src( $file_id, $mobile_variant );
+								$mobile_variant_src = wp_get_attachment_image_src( $mobile_file_id, $mobile_variant );
 								if ( $mobile_variant_src ) {
 									$mobile_srcset_array[ $mobile_variant_src[1] ] = $mobile_variant_src[0] . ' ' . $mobile_variant_src[1] . 'w';
 								}
 							}
 						}
 
-						if ( ! empty( $image_meta['width'] ) && ! empty( $image_data['url'] ) ) {
-							$mobile_srcset_array[ intval( $image_meta['width'] ) ] = $image_data['url'] . ' ' . intval( $image_meta['width'] ) . 'w';
+						if ( ! empty( $mobile_meta['width'] ) && ! empty( $mobile_image_data['url'] ) ) {
+							$mobile_srcset_array[ intval( $mobile_meta['width'] ) ] = $mobile_image_data['url'] . ' ' . intval( $mobile_meta['width'] ) . 'w';
 						}
 
 						if ( empty( $mobile_srcset_array ) ) {

@@ -5,6 +5,10 @@
  * - hover: Play on hover, pause on leave
  * - autoplay: Custom controls (play/pause + mute/unmute)
  * - onclick-popup: Opens in modal (video-popup.js)
+ *
+ * Reduce Motion: autoplay videos rendered with data-motion-start="auto"
+ * (mosharaf_render_video( …, [ 'reduced_motion' => true ] ), the default)
+ * are started here only when the visitor hasn't asked for reduced motion.
  */
 
 (function() {
@@ -16,7 +20,13 @@
 		initializeVideoBehaviors();
 	}
 
+	const prefersReducedMotion = window.matchMedia
+		&& window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 	function initializeVideoBehaviors() {
+		// Runs first: a YouTube-only page has no <video> for the early return below.
+		initializeMotionAwareStart();
+
 		const videos = document.querySelectorAll('video[data-behavior]');
 
 		if (videos.length === 0) {
@@ -187,7 +197,50 @@
 		});
 	}
 
+	/**
+	 * Start (or hold) autoplay videos rendered with data-motion-start="auto".
+	 * - Self-hosted / Vimeo / CDN: rendered without autoplay + preload="none";
+	 *   play() unless reduced motion. If the browser refuses (e.g. iPhone Low
+	 *   Power Mode) the poster stays and the play button still works.
+	 * - YouTube: autoplays from the iframe URL, so with reduced motion the
+	 *   iframe is swapped for the video's thumbnail (.is-still).
+	 */
+	function initializeMotionAwareStart() {
+		document.querySelectorAll('.video-container[data-motion-start="auto"]').forEach(function(container) {
+			const video = container.querySelector('video');
+
+			if (video) {
+				if (!prefersReducedMotion) {
+					const playPromise = video.play();
+					if (playPromise !== undefined) {
+						playPromise.catch(function() {}); // blocked → poster stays
+					}
+				}
+				return;
+			}
+
+			const iframe = container.querySelector('iframe');
+			if (iframe && prefersReducedMotion) {
+				const match = (iframe.getAttribute('src') || '').match(/\/embed\/([^?&\/]+)/);
+				if (match) {
+					container.style.backgroundImage = 'url(https://img.youtube.com/vi/' + match[1] + '/maxresdefault.jpg)';
+				}
+				container.classList.add('is-still');
+				iframe.remove();
+			}
+		});
+	}
+
 	function initializeAutoplayOnScroll(video) {
+		// Reduce Motion: never start on scroll — the poster stays, the play button still works.
+		if (prefersReducedMotion) {
+			if (!video.paused) {
+				video.pause();
+				video.currentTime = 0;
+			}
+			return;
+		}
+
 		// Pause the video immediately if it starts autoplaying
 		// The autoplay attribute is needed to load the first frame/poster
 		// But we don't want it to play until user scrolls to it

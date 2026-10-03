@@ -50,6 +50,35 @@ if ( ! function_exists( 'mosharaf_render_header_button' ) ) {
 }
 
 
+if ( ! function_exists( 'mosharaf_get_phone_href' ) ) {
+	/**
+	 * Builds a tel: link from a display number — "01782 399000" → "tel:01782399000".
+	 */
+	function mosharaf_get_phone_href( $phone ) {
+		$digits = preg_replace( '/[^0-9+]/', '', (string) $phone );
+
+		return $digits ? 'tel:' . $digits : '';
+	}
+}
+
+if ( ! function_exists( 'mosharaf_render_link_attrs' ) ) {
+	/**
+	 * href + target/rel attributes for an ACF link array — for custom markup
+	 * where mosharaf_render_button() doesn't fit (menus, dropdowns, icon links).
+	 *
+	 * Usage: <a <?php echo mosharaf_render_link_attrs( $link ); ?>>…</a>
+	 */
+	function mosharaf_render_link_attrs( $link ) {
+		if ( empty( $link['url'] ) ) {
+			return 'href="#"';
+		}
+
+		$target = $link['target'] ?? '';
+
+		return 'href="' . esc_url( $link['url'] ) . '"' . ( $target ? ' target="' . esc_attr( $target ) . '" rel="noopener noreferrer"' : '' );
+	}
+}
+
 if ( ! function_exists( 'mosharaf_get_site_logo' ) ) {
 	function mosharaf_get_site_logo() {
 		if ( ! function_exists( 'get_field' ) ) {
@@ -92,14 +121,19 @@ if ( ! function_exists( 'mosharaf_render_site_logo' ) ) {
 		?>
 		<a href="<?php echo esc_url( $home_url ); ?>" class="<?php echo esc_attr( $args['link_class'] ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 			<?php
-			mosharaf_render_responsive_picture(
-				$logo,
-				[
-					'class' => $args['class'],
-					'alt'   => $args['alt'],
-					'sizes' => '(max-width: 768px) 100px, 160px',
-				]
-			);
+			if ( 'image/svg+xml' === ( $logo['mime_type'] ?? '' ) && function_exists( 'mosharaf_render_icon' ) ) {
+				// Inline SVG — crisp at any size, no srcset needed, colourable via currentColor.
+				mosharaf_render_icon( $logo, [ 'class' => $args['class'], 'alt' => $args['alt'] ] );
+			} else {
+				mosharaf_render_responsive_picture(
+					$logo,
+					[
+						'class' => $args['class'],
+						'alt'   => $args['alt'],
+						'sizes' => '(max-width: 768px) 100px, 160px',
+					]
+				);
+			}
 			?>
 		</a>
 		<?php
@@ -181,14 +215,19 @@ if ( ! function_exists( 'mosharaf_render_footer_logo' ) ) {
 		?>
 		<a href="<?php echo esc_url( $home_url ); ?>" class="<?php echo esc_attr( $args['link_class'] ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 			<?php
-			mosharaf_render_responsive_picture(
-				$logo,
-				[
-					'class' => $args['class'],
-					'alt'   => $args['alt'],
-					'sizes' => '(max-width: 768px) 100px, 160px',
-				]
-			);
+			if ( 'image/svg+xml' === ( $logo['mime_type'] ?? '' ) && function_exists( 'mosharaf_render_icon' ) ) {
+				// Inline SVG — crisp at any size, no srcset needed, colourable via currentColor.
+				mosharaf_render_icon( $logo, [ 'class' => $args['class'], 'alt' => $args['alt'] ] );
+			} else {
+				mosharaf_render_responsive_picture(
+					$logo,
+					[
+						'class' => $args['class'],
+						'alt'   => $args['alt'],
+						'sizes' => '(max-width: 768px) 100px, 160px',
+					]
+				);
+			}
 			?>
 		</a>
 		<?php

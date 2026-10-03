@@ -99,6 +99,8 @@ mosharaf-core/
    - Asset enqueue (fonts, CSS, video JS) — Slick + CF7 load conditionally, jQuery to footer (see Performance below)
    - Gutenberg disable
    - ACF JSON sync configuration
+   - `has-hero-first` body class (singular pages whose first `cms` layout is a hero — lets a header float over the hero)
+   - SVG uploads for administrators only (logos/icons are inlined by `mosharaf_render_icon()`)
 2. `inc/image-sizes.php` registers project image sizes
 3. All helper function files are loaded from `inc/helper-functions/`
 4. WordPress loads templates on request (`page.php`, `single.php`, etc.)
@@ -156,9 +158,11 @@ per-feature asset to the pages that use it.
 
 ## Design Token System
 
-All design tokens are CSS custom properties in `style.css` `:root {}`. This file loads after `assets/css/mosharaf-core-theme-style.css`, so its values always win.
+All design tokens are CSS custom properties in `style.css` `:root {}`. `style.css` loads **last** (after every `assets/css/` file), so its values always win.
 
-Key tokens: `--mc-color-primary`, `--mc-color-secondary`, `--mc-color-accent`, `--mc-color-dark`, `--mc-color-mid`, `--mc-color-subtle`, `--mc-color-light`, `--mc-font-heading`, `--mc-font-body`, `--mc-container-max`, `--mc-section-padding-y`.
+> ⚠ Because it loads last, a responsive token override placed in an earlier file is overwritten by the base value here. Put responsive token steps (e.g. the `--mc-layout-padding` 1200/1600 steps) in `style.css` too, right after `:root {}`.
+
+Key tokens: `--mc-color-primary`, `--mc-color-secondary`, `--mc-color-accent`, `--mc-color-dark`, `--mc-color-mid`, `--mc-color-subtle`, `--mc-color-light`, `--mc-font-heading`, `--mc-font-body`, `--mc-container-max`, `--mc-layout-padding`.
 
 **Per-project setup:**
 1. Update the 7 hex values in `style.css` `:root {}`
@@ -284,6 +288,6 @@ ACF Options pages are created and managed **directly in the ACF plugin UI** — 
 
 - Pre-built sections. Build each section from the client design.
 - ~~WooCommerce integration~~ — **WooCommerce support is now included in the starter.** See `WOOCOMMERCE.md`.
-- Custom post types. Register per project in `functions.php` or a new `inc/` file.
+- Custom post types. Register per project — in **ACF › Post Types / Taxonomies** (saved to `acf-json/`, easiest to manage) or in a new `inc/` file.
 - Navigation walkers. Add per project if needed.
 - Component libraries. There are no pre-built card, accordion, or gallery components.

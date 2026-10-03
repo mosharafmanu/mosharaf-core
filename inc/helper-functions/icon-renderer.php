@@ -6,9 +6,10 @@
 if ( ! function_exists( 'mosharaf_render_icon' ) ) {
 	function mosharaf_render_icon( $icon, $args = [] ) {
 		$defaults = [
-			'class' => '',
-			'alt'   => '',
-			'echo'  => true,
+			'class'      => '',
+			'alt'        => '',
+			'decorative' => false, // true → hidden from screen readers (icon sits next to visible text)
+			'echo'       => true,
 		];
 
 		$args = wp_parse_args( $args, $defaults );
@@ -45,9 +46,13 @@ if ( ! function_exists( 'mosharaf_render_icon' ) ) {
 				$aria_label = $alt ?: 'Icon';
 				$class_attr = $args['class'] ? ' class="' . esc_attr( $args['class'] ) . '"' : '';
 
+				$a11y_attr = $args['decorative']
+					? ' aria-hidden="true" focusable="false"'
+					: ' role="img" aria-label="' . esc_attr( $aria_label ) . '"';
+
 				$svg_tag = preg_replace(
 					'/<svg/',
-					'<svg' . $class_attr . ' role="img" aria-label="' . esc_attr( $aria_label ) . '"',
+					'<svg' . $class_attr . $a11y_attr,
 					$svg_content,
 					1
 				);
@@ -67,7 +72,7 @@ if ( ! function_exists( 'mosharaf_render_icon' ) ) {
 		$html = sprintf(
 			'<img src="%s" alt="%s"%s />',
 			esc_url( $url ),
-			esc_attr( $alt ),
+			esc_attr( $args['decorative'] ? '' : $alt ),
 			$class_attr
 		);
 

@@ -33,7 +33,7 @@ Use this checklist every time you start a new WordPress project from this framew
 - [ ] Open `style.css` and update the color values in `:root {}`
 - [ ] Update `--mc-font-heading` and `--mc-font-body`
 - [ ] Update Google Fonts URL in `functions.php`
-- [ ] Review `--mc-container-max` and `--mc-section-padding-y` against the design grid
+- [ ] Review `--mc-container-max` and the `--mc-layout-padding` gutter steps (in `style.css`) against the design grid
 - [ ] Review button color logic in `.btn-primary`, `.btn-secondary`, `.btn-outline`
 
 ---

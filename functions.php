@@ -231,6 +231,44 @@ add_filter( 'acf/settings/load_json', function( $paths ) {
 
 
 // ─────────────────────────────────────────────────────────────────
+// BODY CLASS — hero first
+// Lets the header/layout react when the page opens with a hero, e.g. a
+// header floating over the hero image instead of pushing content down.
+// Uses mosharaf_has_hero_first_section() (flexible-content.php).
+// ─────────────────────────────────────────────────────────────────
+
+add_filter( 'body_class', function( $classes ) {
+	if ( function_exists( 'mosharaf_has_hero_first_section' ) && is_singular() && mosharaf_has_hero_first_section() ) {
+		$classes[] = 'has-hero-first';
+	}
+	return $classes;
+} );
+
+
+// ─────────────────────────────────────────────────────────────────
+// SVG UPLOADS — administrators only
+// Logos and icons are uploaded as SVG so mosharaf_render_icon() can inline
+// them (and colour them with currentColor). SVG can carry scripts, so only
+// trusted admins may upload.
+// ─────────────────────────────────────────────────────────────────
+
+add_filter( 'upload_mimes', function( $mimes ) {
+	if ( current_user_can( 'manage_options' ) ) {
+		$mimes['svg'] = 'image/svg+xml';
+	}
+	return $mimes;
+} );
+
+add_filter( 'wp_check_filetype_and_ext', function( $data, $file, $filename, $mimes ) {
+	if ( current_user_can( 'manage_options' ) && 'svg' === strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) ) ) {
+		$data['ext']  = 'svg';
+		$data['type'] = 'image/svg+xml';
+	}
+	return $data;
+}, 10, 4 );
+
+
+// ─────────────────────────────────────────────────────────────────
 // CORE INCLUDES
 // ─────────────────────────────────────────────────────────────────
 

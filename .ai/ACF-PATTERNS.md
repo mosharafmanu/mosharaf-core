@@ -187,6 +187,7 @@ mosharaf_render_responsive_picture( array $image, array $args = [] )
 | `size_group` | string | `null` | Predefined token group — define your token map in `image-sizes.php` per project |
 | `mobile_size_group` | string | `null` | Different token group below the mobile breakpoint |
 | `mobile_media_query` | string | `'(max-width: 767px)'` | Breakpoint for mobile source swap |
+| `mobile_image` | array | `null` | A **different** ACF image for the mobile `<source>` (art direction — e.g. a portrait hero photo on phones). Needs `mobile_size_group`; falls back to `$image`. Phones download only the mobile image. |
 | `lazy` | bool | `true` | `false` for LCP / above-the-fold images |
 | `fetchpriority` | string | `'auto'` | `'high'` for LCP images only |
 | `class` | string | `''` | CSS class on `<img>` |
@@ -259,8 +260,11 @@ Automatically renders SVG inline if the file is an SVG. Falls back to `<img>` fo
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `class` | string | `''` | CSS class on the SVG or `<img>` |
-| `aria_label` | string | `''` | Accessibility label |
-| `inline` | bool | `true` | Render SVG inline (enables CSS styling) |
+| `alt` | string | attachment alt | Accessible name — becomes `aria-label` on an inline SVG (`role="img"`) |
+| `decorative` | bool | `false` | `true` when the icon sits next to visible text: SVG gets `aria-hidden="true"`, `<img>` gets `alt=""`, so screen readers don't read it twice |
+| `echo` | bool | `true` | Echo or return |
+
+SVGs are inlined, so `fill="currentColor"` in the file lets CSS colour them. SVG uploads are enabled for administrators only (`functions.php`).
 
 ---
 
@@ -281,9 +285,13 @@ See `VIDEO-SYSTEM.md` for full documentation, ACF field structure, and examples.
 **Project-specific** — these functions read from ACF Options page fields. ACF Options pages are created and configured directly in the ACF plugin UI (not via code). Add, remove, or modify these functions to match what your project's header/footer actually needs.
 
 ```php
-// Header — logo
+// Header — logo (SVG logos are inlined via mosharaf_render_icon(); others use the picture helper)
 mosharaf_get_site_logo()           : array|false
 mosharaf_render_site_logo()        : void
+
+// Link helpers — for custom markup where mosharaf_render_button() doesn't fit
+mosharaf_render_link_attrs( array $link ) : string  // href + target/rel for an ACF link: <a <?php echo mosharaf_render_link_attrs( $link ); ?>>
+mosharaf_get_phone_href( string $phone )  : string  // "01782 399000" → "tel:01782399000"
 
 // Header — CTA button
 mosharaf_get_header_button()       : array|false
@@ -417,7 +425,7 @@ dark    → Dark background
 
 ## Global Grid Utilities
 
-Grid layout classes are defined globally in `assets/css/mosharaf-core-theme-style.css`. **Never redefine grid columns inside a section's own CSS.** Use these classes directly in section templates.
+Grid layout classes are defined globally in `assets/css/mosharaf-core-design-style.css`. **Never redefine grid columns inside a section's own CSS.** Use these classes directly in section templates.
 
 ### Base grid class
 
@@ -585,3 +593,18 @@ Defines the **Blog Options** options page.
 - Always commit `acf-json/` to version control
 - Run Sync in WP Admin when deploying to a new environment
 - Never edit `acf-json/*.json` files directly
+
+### Updating a field group from code (ACF API)
+
+When changing an **existing** field group programmatically (e.g. `wp eval-file`), import it the way WP Admin › Sync does — load the JSON, set `ID` to the existing DB post ID, disable local JSON, then import:
+
+```php
+$g       = json_decode( file_get_contents( get_stylesheet_directory() . '/acf-json/group_site_settings.json' ), true );
+// …edit $g['fields']…
+$g['ID'] = 35; // the group's post ID in wp_posts
+acf_disable_filter( 'local' );
+acf_import_field_group( $g ); // writes the DB and the JSON file
+```
+
+- Calling `acf_import_field_group()` with a group fetched by key (no `ID`) creates a **duplicate** DB group.
+- Don't remove such a duplicate with ACF's delete API — it also deletes the shared JSON file. Back up the JSON and delete the duplicate's posts directly.

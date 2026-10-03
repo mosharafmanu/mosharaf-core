@@ -28,6 +28,12 @@ if ( ! function_exists( 'mosharaf_render_video' ) ) {
 			'preload'            => null,
 			'defer'              => false,
 			'poster'             => '',
+			// Accessibility: respect the visitor's "Reduce Motion" setting for
+			// autoplaying video. The video renders deferred (no autoplay, nothing
+			// downloaded) and video-behaviors.js starts it only when reduced motion
+			// isn't requested — otherwise the poster stays (YouTube: thumbnail).
+			// The play button still works if the visitor chooses to watch.
+			'reduced_motion'     => true,
 		];
 		$args = wp_parse_args( $args, $defaults );
 
@@ -45,6 +51,19 @@ if ( ! function_exists( 'mosharaf_render_video' ) ) {
 
 		if ( empty( $video_source ) ) {
 			return '';
+		}
+
+		// Plain autoplay respects Reduce Motion: render deferred and let JS decide.
+		// Skipped when the caller defers itself (it starts playback) or uses
+		// autoplay-on-scroll (handled in video-behaviors.js).
+		$motion_aware = $args['reduced_motion']
+			&& 'autoplay' === $args['behavior']
+			&& $args['autoplay']
+			&& ! $args['autoplay_on_scroll']
+			&& ! $args['defer'];
+
+		if ( $motion_aware && 'youtube' !== $video_source ) {
+			$args['defer'] = true;
 		}
 
 		$video_html = '';
@@ -88,7 +107,7 @@ if ( ! function_exists( 'mosharaf_render_video' ) ) {
 			$container_class .= ' ' . esc_attr( $args['container_class'] );
 		}
 
-		$html = '<div class="' . $container_class . '" data-behavior="' . esc_attr( $args['behavior'] ) . '">';
+		$html = '<div class="' . $container_class . '" data-behavior="' . esc_attr( $args['behavior'] ) . '"' . ( $motion_aware ? ' data-motion-start="auto"' : '' ) . '>';
 		$html .= $video_html;
 
 		if ( 'onclick-popup' === $args['behavior'] ) {

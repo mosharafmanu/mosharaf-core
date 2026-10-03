@@ -72,6 +72,20 @@ Design Tokens
 	*/
 }
 
+/* Gutter steps — defined here (not in mosharaf-core-design-style.css) because this
+   file loads last, so a :root override anywhere earlier would be overwritten by
+   the base --mc-layout-padding value above. */
+@media only screen and (min-width: 1200px) {
+	:root {
+		--mc-layout-padding: 2rem;      /* 32px — also drives .mc-container.layout-padding max-width */
+	}
+}
+@media only screen and (min-width: 1600px) {
+	:root {
+		--mc-layout-padding: 3.125rem;  /* 50px */
+	}
+}
+
 /*
 =============================================================================
 Client Project Styles

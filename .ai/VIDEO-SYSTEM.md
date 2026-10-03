@@ -144,6 +144,7 @@ mosharaf_render_video( $video_field, $args = [] )
 | `preload` | string\|null | `null` | Explicit `<video preload>` value (`'none'` \| `'metadata'` \| `'auto'`). When `null`, resolved automatically (see below). Self-hosted only. |
 | `defer` | bool | `false` | Render **without** the `autoplay` attribute and with `preload="none"`, so the file is **not fetched until JS calls `.play()`** (e.g. offscreen slides started later by a rotator/observer). Self-hosted only. |
 | `poster` | string | `''` | Fallback poster URL used only when the video field has no poster of its own. Self-hosted only. |
+| `reduced_motion` | bool | `true` | Respect the visitor's **Reduce Motion** setting for plain `autoplay` (see below). Renders the video deferred and lets `video-behaviors.js` start it only when reduced motion isn't requested. Ignored when the caller passes `defer` or `autoplay_on_scroll`. Pass `false` to restore the always-autoplay attribute. |
 
 `playsinline` is always added to all video elements automatically.
 
@@ -186,6 +187,46 @@ WordPress does **not** compress video on upload. The `video_self_host_file`
 field carries instruction text (via `acf/load_field` at the end of
 `inc/helper-functions/video-renderer.php`) telling editors to upload a
 web-optimised MP4 (**1080p max, <~3 MB, H.264, no audio**).
+
+---
+
+## Reduce Motion & Blocked Autoplay
+
+Autoplaying motion should respect the OS **Reduce Motion** setting (WCAG 2.3.3). With the default `reduced_motion => true`, a plain `autoplay` video:
+
+1. Renders **without** the `autoplay` attribute and with `preload="none"`, on a container marked `data-motion-start="auto"` — nothing downloads yet.
+2. `video-behaviors.js` calls `.play()` **unless** `prefers-reduced-motion: reduce` matches. With reduced motion the poster stays; the play button (when `controls` is on) still lets the visitor choose to watch.
+3. **YouTube** autoplays from its iframe URL, so with reduced motion the iframe is removed and the video's thumbnail is shown instead (`.video-container.is-still`).
+4. `autoplay_on_scroll` videos never start on scroll for reduced-motion visitors.
+
+When the browser **blocks** autoplay (e.g. iPhone Low Power Mode) the `.play()` call is refused: the poster stays and a tap on the play button starts the video (a tap is a user gesture, which iOS allows).
+
+A side benefit: nothing competes with the page's critical resources before the script runs, so the poster (often the LCP image) arrives sooner.
+
+### Background video guidance
+
+- **Make the poster required** in ACF for background videos (self-hosted, Vimeo and CDN poster fields). It's what visitors see while the video loads, with Low Power Mode, and with Reduce Motion. Use a still from the video (ideally its first frame) with the subject **centred** — narrow screens crop the sides.
+- One poster is right for all devices **as long as the same video plays everywhere**: it's cropped exactly like the video, so there's no jump when playback starts. A separate mobile poster only makes sense with a separate (portrait) mobile video.
+- **Overlays:** if a section puts a dark overlay over the video (`::after`), give the overlay a `z-index`, the text above it a higher one, and `.video-autoplay-controls` the highest — otherwise the overlay covers the controls and they can't be clicked. Add `pointer-events: none` to the overlay.
+
+---
+
+## Cover — Full-Bleed Background Video
+
+Add `is-cover` to `container_class` to make the video fill its nearest positioned ancestor like `object-fit: cover`:
+
+```php
+// Section CSS: .my-hero { position: relative; height: …; }
+mosharaf_render_video( $video, [
+    'behavior'        => 'autoplay',
+    'muted'           => true,
+    'loop'            => true,
+    'container_class' => 'is-cover',
+] );
+```
+
+- Self-hosted / Vimeo / CDN `<video>` fill via `object-fit: cover`.
+- **YouTube** can't use `object-fit`, so the 16:9 iframe is scaled with container query units (`max(100cqw, 177.78cqh)`) and centred — it covers landscape and portrait boxes alike. The global `iframe { max-width: 100% }` rule is overridden for it, otherwise it would be squashed on portrait screens.
 
 ---
 

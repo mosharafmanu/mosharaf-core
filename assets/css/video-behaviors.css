@@ -27,6 +27,40 @@
 }
 
 /* ============================================
+   COVER — full-bleed background video (opt-in)
+   mosharaf_render_video( $video, [ 'container_class' => 'is-cover' ] )
+   Fills its nearest positioned ancestor like object-fit: cover, for
+   self-hosted/Vimeo/CDN <video> AND YouTube (iframes can't use object-fit,
+   so the 16:9 frame is scaled with container units).
+   ============================================ */
+
+.video-container.is-cover {
+	position: absolute;
+	inset: 0;
+	height: 100%;
+	overflow: hidden;
+	container-type: size;
+}
+
+.video-container.is-cover iframe {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: max(100cqw, 177.78cqh);
+	max-width: none; /* the global iframe { max-width: 100% } would squash it on portrait screens */
+	height: max(100cqh, 56.25cqw);
+	border: 0;
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+}
+
+/* Reduce Motion + YouTube: iframe swapped for the video thumbnail (video-behaviors.js) */
+.video-container.is-still {
+	background-position: center;
+	background-size: cover;
+}
+
+/* ============================================
    HOVER BEHAVIOR STYLES
    ============================================ */
 

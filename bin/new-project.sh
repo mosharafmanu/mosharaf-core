@@ -363,12 +363,14 @@ fi
 # =============================================================
 step "Verification"
 
+# `|| true`: with `set -eo pipefail`, grep exits 1 when it finds nothing — which
+# is the success case here — and would otherwise abort the script silently.
 REMAINING=$(grep -rl "mosharaf-core\|mosharaf_\|Mosharaf Core\|--mc-\|bg-mc-\|color-mc-" \
     "$THEME_DIR" \
     --include="*.php" --include="*.css" --include="*.js" \
     --include="*.json" --include="*.md" \
     2>/dev/null | grep -v "node_modules\|vendor\|\.git\|bin/new-project.sh" \
-    | wc -l | tr -d ' ')
+    | wc -l | tr -d ' ') || true
 
 if [[ "$REMAINING" -eq 0 ]]; then
     ok "No starter identifiers remain in active files"
@@ -405,7 +407,7 @@ echo "   1. Fill in Theme URI, Author, Author URI, Description in style.css"
 echo "   2. Update Google Fonts URL in functions.php"
 echo "   3. Set token values in the :root {} block in style.css"
 echo "   4. Define image sizes in inc/image-sizes.php"
-echo "   5. Configure ACF options pages in inc/acf-options.php"
+echo "   5. Configure ACF Options pages in WP Admin > Custom Fields > Options Pages"
 echo "   6. Run ACF Sync in WP Admin after activating the theme"
 echo ""
 echo -e "  ${DIM}See .ai/NEW-PROJECT-CHECKLIST.md for the full setup guide.${RESET}"

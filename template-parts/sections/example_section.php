@@ -25,7 +25,7 @@ if ( $image ) {
 ?>
 
 <section class="<?php echo esc_attr( implode( ' ', $section_classes ) ); ?>">
-	<div class="container">
+	<div class="mc-container">
 
 		<div class="example-section__content">
 
@@ -46,8 +46,8 @@ if ( $image ) {
 				mosharaf_render_button(
 					$button_link,
 					[
-						'style' => 'primary',
-						'arrow' => true,
+						'style'     => 'btn-primary', // the CSS class, not a short name
+						'show_icon' => true,
 					]
 				);
 			}
@@ -62,11 +62,13 @@ if ( $image ) {
 					mosharaf_render_responsive_picture(
 						$image,
 						[
-							'size'           => 'mc-900',
-							'mobile_size'    => 'mc-600',
+							// Define 'media-content' in the $token_map in responsive-picture.php.
+							// An unknown group still renders, with an automatic srcset.
+							'size_group'     => 'media-content',
+							'sizes'          => '(max-width: 767px) 100vw, 50vw',
 							'class'          => 'example-section__image',
 							'lazy'           => true,
-							'fetch_priority' => 'auto',
+							'fetchpriority'  => 'auto', // 'high' + lazy => false for above-the-fold images
 						]
 					);
 				}
