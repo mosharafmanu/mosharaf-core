@@ -141,3 +141,4 @@ All documentation lives in `.ai/`. Read these before starting a new project:
 5. `.ai/TYPOGRAPHY.md` — type scale and heading conventions
 6. `.ai/NEW-PROJECT-SETUP.md` — bootstrap script reference
 7. `.ai/THEME-ARCHITECTURE.md` — how the framework is structured
+8. `.ai/AGENCY-STANDARDS.md` — the agency's standing build rules (admin setup, front end, testing); check every section against it

@@ -87,6 +87,10 @@ Use this checklist every time you start a new WordPress project from this framew
 
 See `ACF-PATTERNS.md` for the full section-building workflow.
 
+- [ ] Check every section against `AGENCY-STANDARDS.md` (the agency's standing rules: field
+      labels, compact rows, minimal image sizes, booking links, hero headings, touch menus,
+      hover transitions) and against the project's own `CLIENT-HANDOVER.md` if there is one
+
 ---
 
 ## Phase I — Cleanup
